@@ -2,7 +2,6 @@ import fdb
 
 class Importuserdata():
 
-
     def __init__(self, path):
         self.users = {}
         self.path = path
@@ -15,14 +14,11 @@ class Importuserdata():
         self.parallel_ringingdata = []
         self.users = {}
 
-
     def print_users(self):
         for i in self.users:
             print(self.users[i])
 
-
     def importuserdata(self):
-
 
         with open(self.path + "/extension") as file:
             print("Load Extension File")
@@ -63,7 +59,6 @@ class Importuserdata():
     def createuserdata(self):
         # Erstellen des User Dictionary
 
-
         # Verarbeitet die Extension Daten in das User Dictionary
         for i in range(len(self.extensiondata)):
             if self.extensiondata[i][0].isdigit():
@@ -80,8 +75,6 @@ class Importuserdata():
                     self.users[number] = list
                 else:
                     self.users[number] = list
-
-
 
         # Verarbeitet die name1 Daten in das User Dictionary
         for i in range(len(self.name1data)):
@@ -190,12 +183,6 @@ class Importuserdata():
 
 
 
-        #for i in self.users:
-            #print(self.users[i])
-
-
-
-
 class Importsystemdata():
 
     def __init__(self, path):
@@ -238,90 +225,81 @@ class Importsystemdata():
 
 
 class Importsiriodata():
-    con = fdb.connect(dsn='localhost:c:\sirio.gdb', user='sysdba', password='masterkey')
 
-    cur = con.cursor()
+    def __init__(self):
+        con = fdb.connect(dsn='localhost:c:\sirio.gdb', user='sysdba', password='masterkey')
 
-    cur.execute("select * from ALARM")
-    dataAlarm = cur.fetchall()
+        cur = con.cursor()
 
-    cur.execute("select * from AL_ESPA")
-    dataEspa = cur.fetchall()
+        cur.execute("select * from ALARM")
+        self.dataAlarm = cur.fetchall()
 
-    cur.execute("select * from AL_AGroup")
-    dataAgroup = cur.fetchall()
+        cur.execute("select * from AL_ESPA")
+        self.dataEspa = cur.fetchall()
 
-    cur.execute("select * from AL_REF_A")
-    dataAlRef = cur.fetchall()
+        cur.execute("select * from AL_AGroup")
+        self.dataAgroup = cur.fetchall()
 
-    cur.execute("select * from AL_REF_J")
-    dataJoRef = cur.fetchall()
+        cur.execute("select * from AL_REF_A")
+        self.dataAlRef = cur.fetchall()
 
-    cur.execute("select * from AL_JGROUP")
-    dataJgroup = cur.fetchall()
+        cur.execute("select * from AL_REF_J")
+        self.dataJoRef = cur.fetchall()
 
-    cur.execute("select * from AL_JOB")
-    dataJob = cur.fetchall()
+        cur.execute("select * from AL_JGROUP")
+        self.dataJgroup = cur.fetchall()
 
-    cur.execute("select * from AL_AB_IN")
-    dataCont = cur.fetchall()
+        cur.execute("select * from AL_JOB")
+        self.dataJob = cur.fetchall()
 
-    print(dataAlarm)
-    print(dataEspa)
-    print(dataAgroup)
-    print(dataAlRef)
-    print(dataJoRef)
-    print(dataJgroup)
-    print(dataJob)
+        cur.execute("select * from AL_AB_IN")
+        self.dataCont = cur.fetchall()
 
-    # ESPA
-    for espa in dataEspa:
-        for alarm in dataAlarm:
-            if espa[5] == alarm[0]:
-                for alref in dataAlRef:
-                    if alarm[6] == alref[1]:
-                        for joref in dataJoRef:
-                            if alref[2] == joref[1]:
-                                for job in dataJob:
-                                    if joref[2] == job[0]:
-                                        print(str(alarm[1]) + " Enthält: " + str(job[1]))
+        print(self.dataAlarm)
+        print(self.dataEspa)
+        print(self.dataAgroup)
+        print(self.dataAlRef)
+        print(self.dataJoRef)
+        print(self.dataJgroup)
+        print(self.dataJob)
 
-    # Contacts
-    # Öffner
-    for cont in dataCont:
-        # print(str(type(cont[4])) + cont[7])
-        for alarm in dataAlarm:
-            if cont[4] == alarm[0]:
-                for alref in dataAlRef:
-                    if alarm[6] == alref[1]:
-                        for joref in dataJoRef:
-                            if alref[2] == joref[1]:
-                                for job in dataJob:
-                                    if joref[2] == job[0]:
-                                        print(str(alarm[1]) + " Enthält: " + str(job[1]))
+        # ESPA
+        for espa in self.dataEspa:
+            for alarm in self.dataAlarm:
+                if espa[5] == alarm[0]:
+                    for alref in self.dataAlRef:
+                        if alarm[6] == alref[1]:
+                            for joref in self.dataJoRef:
+                                if alref[2] == joref[1]:
+                                    for job in self.dataJob:
+                                        if joref[2] == job[0]:
+                                            print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
-    # Schliesser
-    for cont in dataCont:
-        # print(str(type(cont[4])) + cont[7])
-        for alarm in dataAlarm:
-            if cont[2] == alarm[0]:
-                for alref in dataAlRef:
-                    if alarm[6] == alref[1]:
-                        for joref in dataJoRef:
-                            if alref[2] == joref[1]:
-                                for job in dataJob:
-                                    if joref[2] == job[0]:
-                                        print(str(alarm[1]) + " Enthält: " + str(job[1]))
+        # Contacts
+        # Öffner
+        for cont in self.dataCont:
+            # print(str(type(cont[4])) + cont[7])
+            for alarm in self.dataAlarm:
+                if cont[4] == alarm[0]:
+                    for alref in self.dataAlRef:
+                        if alarm[6] == alref[1]:
+                            for joref in self.dataJoRef:
+                                if alref[2] == joref[1]:
+                                    for job in self.dataJob:
+                                        if joref[2] == job[0]:
+                                            print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
+        # Schliesser
+        for cont in self.dataCont:
+            # print(str(type(cont[4])) + cont[7])
+            for alarm in self.dataAlarm:
+                if cont[2] == alarm[0]:
+                    for alref in self.dataAlRef:
+                        if alarm[6] == alref[1]:
+                            for joref in self.dataJoRef:
+                                if alref[2] == joref[1]:
+                                    for job in self.dataJob:
+                                        if joref[2] == job[0]:
+                                            print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
-
-#data = Importdata("C:\Source20200821")
-#data.importuserdata()
-#data.createuserdata()
-
-
-
-
-#data = Importdata("c:/Source")
-#data.print_users()
 

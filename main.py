@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+import importdata
 
 root = Tk()
 root.title("MX-Dokumentationstool")
@@ -102,7 +103,8 @@ def createsiriodoc():
                                    "Ausgabeverzeichnis: " + siriooutput + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
     if response == 1:
-        print("Es wird ausgeführt")
+        siriodata = importdata.Importsiriodata()
+
     else:
         print("Abbruch")
 
@@ -120,7 +122,10 @@ def createmxonedoc():
                                    "Ausgabeverzeichnis: " + siriooutput + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
     if response == 1:
-        print("Es wird ausgeführt")
+        mxonedata = importdata.Importuserdata(mxonepath)
+        mxonedata.importuserdata()
+        mxonedata.createuserdata()
+        mxonedata.print_users()
     else:
         print("Abbruch")
 
