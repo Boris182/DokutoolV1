@@ -129,7 +129,6 @@ def createmxonedoc():
     else:
         print("Abbruch")
 
-
 # Frames initiieren
 frameInfo = LabelFrame(root, text="Info", padx=5, pady=5)
 frameInfo.grid(row=0, column=0, padx=5, pady=5)

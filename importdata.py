@@ -255,6 +255,7 @@ class Importsiriodata():
         cur.execute("select * from AL_AB_IN")
         self.dataCont = cur.fetchall()
 
+
         print(self.dataAlarm)
         print(self.dataEspa)
         print(self.dataAgroup)
