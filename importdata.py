@@ -181,8 +181,6 @@ class Importuserdata():
                 else:
                     self.users[number] = list
 
-
-
 class Importsystemdata():
 
     def __init__(self, path):
@@ -222,7 +220,6 @@ class Importsystemdata():
             print("Load Extension File")
             self.ksddpdata = file.readlines()
             print(self.ksddpdata[0])
-
 
 class Importsiriodata():
 
