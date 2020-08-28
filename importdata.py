@@ -69,7 +69,7 @@ class Importuserdata():
                 csp = userdata[3]
                 virtual = userdata[4]
                 third = userdata[13]
-                list = [number, virtual, "", "", "", csp, server, "", "", third]
+                list = [number, virtual, "", "", "", csp, server, "", "", third, "", ""]
 
                 if number in self.users:
                     self.users[number] = list
@@ -84,7 +84,7 @@ class Importuserdata():
                 number = userdata[0]
                 name1 = userdata[4]
                 name2 = userdata[5]
-                list = [number, "", "", name1, name2, "", "", "", "", ""]
+                list = [number, "", "", name1, name2, "", "", "", "", "", "", ""]
 
                 if number in self.users:
                     self.users[number][0] = number
@@ -99,7 +99,7 @@ class Importuserdata():
                 userdata = self.dect_extensiondata[i].split()
 
                 number = userdata[0]
-                list = [number, "DECT", "", "", "", "", "", "", "", ""]
+                list = [number, "DECT", "", "", "", "", "", "", "", "", "", ""]
 
                 if number in self.users:
                     self.users[number][0] = number
@@ -114,7 +114,7 @@ class Importuserdata():
 
                 number = userdata[0]
                 iptype = userdata[1]
-                list = [number, iptype, "", "", "", "", "", "", "", ""]
+                list = [number, iptype, "", "", "", "", "", "", "", "", "", ""]
 
                 if number in self.users:
                     self.users[number][0] = number
@@ -130,7 +130,7 @@ class Importuserdata():
                 number = userdata[0]
                 address = userdata[1]
                 cat = userdata[2]
-                list = [number, "Analog", address, "", "", cat, "", "", "", ""]
+                list = [number, "Analog", address, "", "", cat, "", "", "", "", "", ""]
 
                 if number in self.users:
                     self.users[number][0] = number
@@ -149,7 +149,7 @@ class Importuserdata():
                 number = userdata[0]
                 address = userdata[1]
                 cat = userdata[2]
-                list = [number, "Digital", address, "", "", cat, "", "", "", ""]
+                list = [number, "Digital", address, "", "", cat, "", "", "", "", "", ""]
 
                 if number in self.users:
                     self.users[number][0] = number
@@ -167,11 +167,11 @@ class Importuserdata():
                 if len(userdata) == 4:
                     secondary1 = userdata[1]
                     secondary2 = userdata[2]
-                    list = [number, "", "", "", "", "", "", secondary1, secondary2, ""]
+                    list = [number, "", "", "", "", "", "", secondary1, secondary2, "", "", ""]
                 elif len(userdata) == 3:
                     secondary1 = userdata[1]
                     secondary2 = ""
-                    list = [number, "", "", "", "", "", "", secondary1, "", ""]
+                    list = [number, "", "", "", "", "", "", secondary1, "", "", "", ""]
 
 
                 if number in self.users:
