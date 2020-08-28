@@ -181,6 +181,8 @@ class Importuserdata():
                 else:
                     self.users[number] = list
 
+
+
 class Importsystemdata():
 
     def __init__(self, path):
@@ -221,14 +223,10 @@ class Importsystemdata():
             self.ksddpdata = file.readlines()
             print(self.ksddpdata[0])
 
+
 class Importsiriodata():
 
     def __init__(self):
-
-        self.espaevents = []
-        self.contactevents = []
-        self.jobs = []
-
         con = fdb.connect(dsn='localhost:c:\sirio.gdb', user='sysdba', password='masterkey')
 
         cur = con.cursor()
@@ -257,16 +255,14 @@ class Importsiriodata():
         cur.execute("select * from AL_AB_IN")
         self.dataCont = cur.fetchall()
 
-        print(self.dataAlarm[0])
-        print(self.dataEspa[0])
-        print(self.dataAgroup[0])
-        print(self.dataAlRef[0])
-        print(self.dataJoRef[0])
-        print(self.dataJgroup[0])
-        print(self.dataJob[0])
-        print(self.dataCont[0])
+        print(self.dataAlarm)
+        print(self.dataEspa)
+        print(self.dataAgroup)
+        print(self.dataAlRef)
+        print(self.dataJoRef)
+        print(self.dataJgroup)
+        print(self.dataJob)
 
-    def createsiriodata(self):
         # ESPA
         for espa in self.dataEspa:
             for alarm in self.dataAlarm:
@@ -307,18 +303,3 @@ class Importsiriodata():
                                             print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
 
-    def createevents(self):
-
-        # ESPA Events
-        for i in range(len(self.dataEspa)):
-            print(self.dataEspa[i][7] + ": Call Address: " + self.dataEspa[i][2])
-            eventsdata = [self.dataEspa[i][7], self.dataEspa[i][2]]
-            self.espaevents.append(eventsdata)
-
-        # Eingangskontakte Events
-        for i in range(len(self.dataCont)):
-            eventsdata = [self.dataCont[i][7], self.dataCont[i][0]]
-            self.contactevents.append(eventsdata)
-
-        print(self.espaevents)
-        print(self.contactevents)
