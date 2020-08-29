@@ -5,8 +5,9 @@ cur = con.cursor()
 
 #cur.execute("SELECT * from ALARM")
 
+querydata = {}
 
-cur.execute("SELECT ALARM.ALARM_NAME, AL_JOB.JOB_ID, AL_JOB.JOB_NAME "
+cur.execute("SELECT ALARM.ALARM_NAME, AL_JOB.JOB_NAME, AL_REF_J.PRI "
             "from AL_ESPA "
             "right join ALARM on ALARM.ALARM_ID = AL_ESPA.ALARM_ID "
             "right join AL_REF_A on AL_REF_A.AGROUP_ID = ALARM.AGROUP_ID "
@@ -14,9 +15,16 @@ cur.execute("SELECT ALARM.ALARM_NAME, AL_JOB.JOB_ID, AL_JOB.JOB_NAME "
             "inner join AL_JOB on AL_JOB.JOB_ID = AL_REF_J.JOB_ID "
             "order by ALARM.ALARM_NAME")
 
+espadata = cur.fetchall()
 
-data = cur.fetchall()
+for i in range(len(espadata)):
+    if espadata[i][0] in querydata:
+        querydata[espadata[i][0]].append([espadata[i][1], espadata[i][2]])
+    else:
+        querydata[espadata[i][0]] = [[espadata[i][1], espadata[i][2]]]
+    #print(espadata[i][0])
 
-for i in range(len(data)):
-    print(data[i])
+for i in querydata:
+    print(i)
+    print(querydata[i])
 
