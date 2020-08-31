@@ -12,7 +12,6 @@ ext1to = "0416661499"
 
 provider = "sbcon"
 
-userconvdata = {}
 
 
 with open("C:/Source20200821/number_conversion_print") as file:
@@ -23,13 +22,15 @@ with open("C:/Source20200821/number_conversion_print") as file:
     toentrypos = nucondata[1].find("Cnvtyp")
     tocnvtyppos = nucondata[1].find("Numtyp")
     tonumtyppos = nucondata[1].find("Rou")
-    #toroupos = nucondata[1].find("Tardest")
     totardestpos = nucondata[1].find("Pre")
     toprepos = nucondata[1].find("Trc")
     totrcpos = nucondata[1].find("Newtyp")
+
+    # Reserve
     #tonewtyppos = nucondata[1].find("Cont")
     #tocontpos = nucondata[1].find("Bcap")
     #tobcappos = nucondata[1].find("Hlc")
+    #toroupos = nucondata[1].find("Tardest")
 
 
 
@@ -78,14 +79,11 @@ for e in range(ext1from,ext1to + 1):
     for c in range(len(convdata)):
         if e[:len(convdata[c][0])] == convdata[c][0] and convdata[c][1] == "0":
             print("Extern - Intern")
-            #print(convdata[c][0] + " " + convdata[c][4] + " " + convdata[c][3])
             intnumber = convdata[c][0][int(convdata[c][4]):] + convdata[c][3]
             extnumber = convdata[c][0].replace("41", "0", 1)
-            #userconvdata[intnumber] = [intnumber, extnumber, clip]
+
             if intnumber in userdata.users:
                 userdata.users[intnumber][10] = str(extnumber)
-                #userdata.users[intnumber][11] = str(clip)
-
 
 
 # Intern nach Extern
@@ -98,8 +96,13 @@ for i in range(len(convdata)):
 for d in userdata.users:
     for c in range(len(clipdata)):
         if d[:len(clipdata[c][0])] == clipdata[c][0]:
+            intnumber = d
+            extnumber = str(clipdata[c][1]) + str(d[int(clipdata[c][2]):])
+            userdata.users[intnumber][11] = str(extnumber.replace("41", "0", 1))
 
-print(d)
+
+for i in userdata.users:
+    print(userdata.users[i])
 
 
 

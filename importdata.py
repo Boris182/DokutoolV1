@@ -12,6 +12,8 @@ class Importuserdata():
         self.exddpdata = []
         self.ksddpdata = []
         self.parallel_ringingdata = []
+        self.nucondata = []
+        self.convdata = []
         self.users = {}
 
     def print_users(self):
@@ -54,6 +56,10 @@ class Importuserdata():
             print("Load Extension File")
             self.parallel_ringingdata = file.readlines()
             print(self.parallel_ringingdata[0])
+
+        with open(self.path + "/number_conversion_print") as file:
+            self.nucondata = file.readlines()
+            print(self.nucondata[0])
 
     #Erstellt und Sortiert das User Dictionary, fügt alle Dateien zusammen und ergänzt diese
     def createuserdata(self):
