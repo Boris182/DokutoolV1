@@ -1,3 +1,12 @@
+import importdata
+
+userdata = importdata.Importuserdata("c:/Source20200821")
+userdata.importuserdata()
+userdata.createuserdata()
+
+for d in userdata.users:
+    print(d)
+
 ext1from = "0416661000"
 ext1to = "0416661499"
 
@@ -24,7 +33,7 @@ with open("C:/Source20200821/number_conversion_print") as file:
 
 
 
-
+# Numberconversion Data generieren
 for i in range(len(nucondata)):
     if nucondata[i][0].isdigit():
         # Numberentry Data
@@ -67,18 +76,31 @@ for e in range(ext1from,ext1to + 1):
     elif provider == "combridge":
         e = "0" + str(e)
     for c in range(len(convdata)):
-        if e[:len(convdata[c][0])] == convdata[c][0]:
+        if e[:len(convdata[c][0])] == convdata[c][0] and convdata[c][1] == "0":
             print("Extern - Intern")
             #print(convdata[c][0] + " " + convdata[c][4] + " " + convdata[c][3])
             intnumber = convdata[c][0][int(convdata[c][4]):] + convdata[c][3]
             extnumber = convdata[c][0].replace("41", "0", 1)
-            clip = ""
-            userconvdata[intnumber] = [intnumber, extnumber, clip]
+            #userconvdata[intnumber] = [intnumber, extnumber, clip]
+            if intnumber in userdata.users:
+                userdata.users[intnumber][10] = str(extnumber)
+                #userdata.users[intnumber][11] = str(clip)
+
 
 
 # Intern nach Extern
+# Bereitstellung der CLIP Daten
+clipdata = []
+for i in range(len(convdata)):
+    if convdata[i][1] == "1":
+        clipdata.append([convdata[i][0], convdata[i][3], convdata[i][4]])
 
-print(userconvdata)
+for d in userdata.users:
+    for c in range(len(clipdata)):
+        if d[:len(clipdata[c][0])] == clipdata[c][0]:
+
+print(d)
+
 
 
 
