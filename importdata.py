@@ -25,7 +25,7 @@ class Importuserdata():
             self.extensiondata = file.readlines()
             print(self.extensiondata[0])
 
-        with open(self.path + "/name1") as file:
+        with open(self.path + "/name1", encoding='utf-8') as file:
             print("Load Extension File")
             self.name1data = file.readlines()
             print(self.name1data[0])
@@ -64,9 +64,9 @@ class Importuserdata():
             if self.extensiondata[i][0].isdigit():
                 userdata = self.extensiondata[i].split()
 
-                number = userdata[0]
-                server = userdata[2]
-                csp = userdata[3]
+                number = str(userdata[0])
+                server = str(userdata[2])
+                csp = str(userdata[3])
                 virtual = userdata[4]
                 third = userdata[13]
                 list = [number, virtual, "", "", "", csp, server, "", "", third, "", ""]
@@ -81,9 +81,9 @@ class Importuserdata():
             if self.name1data[i][0].isdigit():
                 userdata = self.name1data[i].split()
 
-                number = userdata[0]
-                name1 = userdata[4]
-                name2 = userdata[5]
+                number = str(userdata[0])
+                name1 = userdata[4].strip('\"')
+                name2 = userdata[5].strip('\"')
                 list = [number, "", "", name1, name2, "", "", "", "", "", "", ""]
 
                 if number in self.users:
@@ -98,7 +98,7 @@ class Importuserdata():
             if self.dect_extensiondata[i][0].isdigit():
                 userdata = self.dect_extensiondata[i].split()
 
-                number = userdata[0]
+                number = str(userdata[0])
                 list = [number, "DECT", "", "", "", "", "", "", "", "", "", ""]
 
                 if number in self.users:
@@ -112,7 +112,7 @@ class Importuserdata():
             if self.ip_extensiondata[i][0].isdigit():
                 userdata = self.ip_extensiondata[i].split()
 
-                number = userdata[0]
+                number = str(userdata[0])
                 iptype = userdata[1]
                 list = [number, iptype, "", "", "", "", "", "", "", "", "", ""]
 
@@ -127,9 +127,9 @@ class Importuserdata():
             if self.exddpdata[i][0].isdigit():
                 userdata = self.exddpdata[i].split()
 
-                number = userdata[0]
+                number = str(userdata[0])
                 address = userdata[1]
-                cat = userdata[2]
+                cat = str(userdata[2])
                 list = [number, "Analog", address, "", "", cat, "", "", "", "", "", ""]
 
                 if number in self.users:
@@ -146,9 +146,9 @@ class Importuserdata():
             if self.ksddpdata[i][0].isdigit():
                 userdata = self.ksddpdata[i].split()
 
-                number = userdata[0]
+                number = str(userdata[0])
                 address = userdata[1]
-                cat = userdata[2]
+                cat = str(userdata[2])
                 list = [number, "Digital", address, "", "", cat, "", "", "", "", "", ""]
 
                 if number in self.users:
@@ -163,13 +163,13 @@ class Importuserdata():
             if self.parallel_ringingdata[i][0].isdigit():
                 userdata = self.parallel_ringingdata[i].split()
 
-                number = userdata[0]
+                number = str(userdata[0])
                 if len(userdata) == 4:
-                    secondary1 = userdata[1]
-                    secondary2 = userdata[2]
+                    secondary1 = str(userdata[1])
+                    secondary2 = str(userdata[2])
                     list = [number, "", "", "", "", "", "", secondary1, secondary2, "", "", ""]
                 elif len(userdata) == 3:
-                    secondary1 = userdata[1]
+                    secondary1 = str(userdata[1])
                     secondary2 = ""
                     list = [number, "", "", "", "", "", "", secondary1, "", "", "", ""]
 
@@ -181,8 +181,6 @@ class Importuserdata():
                 else:
                     self.users[number] = list
 
-
-
 class Importsystemdata():
 
     def __init__(self, path):
@@ -192,36 +190,12 @@ class Importsystemdata():
 
     def importsystemdata(self):
 
-
         with open(self.path + "/ts_about") as file:
             print("Load Extension File")
             self.ts_aboutdata = file.readlines()
             print(self.ts_aboutdata[0])
 
-        with open(self.path + "/name1") as file:
-            print("Load Extension File")
-            self.name1data = file.readlines()
-            print(self.name1data[0])
 
-        with open(self.path + "/dect_extension") as file:
-            print("Load Extension File")
-            self.dect_extensiondata = file.readlines()
-            print(self.dect_extensiondata[0])
-
-        with open(self.path + "/ip_extension") as file:
-            print("Load Extension File")
-            self.ip_extensiondata = file.readlines()
-            print(self.ip_extensiondata[0])
-
-        with open(self.path + "/EXDDP") as file:
-            print("Load Extension File")
-            self.exddpdata = file.readlines()
-            print(self.exddpdata[0])
-
-        with open(self.path + "/KSDDP") as file:
-            print("Load Extension File")
-            self.ksddpdata = file.readlines()
-            print(self.ksddpdata[0])
 
 
 class Importsiriodata():
@@ -237,18 +211,6 @@ class Importsiriodata():
         cur.execute("select * from AL_ESPA")
         self.dataEspa = cur.fetchall()
 
-        cur.execute("select * from AL_AGroup")
-        self.dataAgroup = cur.fetchall()
-
-        cur.execute("select * from AL_REF_A")
-        self.dataAlRef = cur.fetchall()
-
-        cur.execute("select * from AL_REF_J")
-        self.dataJoRef = cur.fetchall()
-
-        cur.execute("select * from AL_JGROUP")
-        self.dataJgroup = cur.fetchall()
-
         cur.execute("select * from AL_JOB")
         self.dataJob = cur.fetchall()
 
@@ -257,49 +219,10 @@ class Importsiriodata():
 
         print(self.dataAlarm)
         print(self.dataEspa)
-        print(self.dataAgroup)
-        print(self.dataAlRef)
-        print(self.dataJoRef)
-        print(self.dataJgroup)
         print(self.dataJob)
+        print(self.dataCont)
 
-        # ESPA
-        for espa in self.dataEspa:
-            for alarm in self.dataAlarm:
-                if espa[5] == alarm[0]:
-                    for alref in self.dataAlRef:
-                        if alarm[6] == alref[1]:
-                            for joref in self.dataJoRef:
-                                if alref[2] == joref[1]:
-                                    for job in self.dataJob:
-                                        if joref[2] == job[0]:
-                                            print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
-        # Contacts
-        # Öffner
-        for cont in self.dataCont:
-            # print(str(type(cont[4])) + cont[7])
-            for alarm in self.dataAlarm:
-                if cont[4] == alarm[0]:
-                    for alref in self.dataAlRef:
-                        if alarm[6] == alref[1]:
-                            for joref in self.dataJoRef:
-                                if alref[2] == joref[1]:
-                                    for job in self.dataJob:
-                                        if joref[2] == job[0]:
-                                            print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
-        # Schliesser
-        for cont in self.dataCont:
-            # print(str(type(cont[4])) + cont[7])
-            for alarm in self.dataAlarm:
-                if cont[2] == alarm[0]:
-                    for alref in self.dataAlRef:
-                        if alarm[6] == alref[1]:
-                            for joref in self.dataJoRef:
-                                if alref[2] == joref[1]:
-                                    for job in self.dataJob:
-                                        if joref[2] == job[0]:
-                                            print(str(alarm[1]) + " Enthält: " + str(job[1]))
 
 

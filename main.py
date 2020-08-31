@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 import importdata
+import exportdata
 
 root = Tk()
 root.title("MX-Dokumentationstool")
@@ -97,12 +98,26 @@ def createsiriodoc():
                                    "Ort: " + inputOrt.get() + "\n" +
                                    "Hauptnummer: " + inputHauptnummer.get() + "\n" +
                                    "Faxnummer: " + inputFaxnummer.get() + "\n" +
-                                   "Nummerbereich 1: " + inputExternalFrom1.get() + " - " + inputExternalTo1.get() + "\n" +
-                                   "Nummerbereich 2: " + inputExternalFrom2.get() + " - " + inputExternalTo2.get() + "\n" +
-                                   "Nummerbereich 3: " + inputExternalFrom3.get() + " - " + inputExternalTo3.get() + "\n" +
+                                   "Nummerbereich 1: " + inputExternalFrom1.get() + " - " +
+                                   inputExternalTo1.get() + "\n" +
+                                   "Nummerbereich 2: " + inputExternalFrom2.get() + " - " +
+                                   inputExternalTo2.get() + "\n" +
+                                   "Nummerbereich 3: " + inputExternalFrom3.get() + " - " +
+                                   inputExternalTo3.get() + "\n" +
                                    "Ausgabeverzeichnis: " + siriooutput + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
     if response == 1:
+        customerdata = {"Kundenname": inputKundenname.get(),
+                        "Adresse": inputAdresse.get(),
+                        "Ort": inputOrt.get(),
+                        "Hauptnummer": inputHauptnummer.get(),
+                        "Faxnummer": inputFaxnummer.get(),
+                        "Nummerbereichfrom1": inputExternalFrom1.get(),
+                        "Nummerbereichto1": inputExternalTo1.get(),
+                        "Nummerbereichfrom2": inputExternalFrom2.get(),
+                        "Nummerbereichto2": inputExternalTo2.get(),
+                        "Nummerbereichfrom3": inputExternalFrom3.get(),
+                        "Nummerbereichto3": inputExternalTo3.get()}
         siriodata = importdata.Importsiriodata()
 
     else:
@@ -116,16 +131,32 @@ def createmxonedoc():
                                    "Ort: " + inputOrt.get() + "\n" +
                                    "Hauptnummer: " + inputHauptnummer.get() + "\n" +
                                    "Faxnummer: " + inputFaxnummer.get() + "\n" +
-                                   "Nummerbereich 1: " + inputExternalFrom1.get() + " - " + inputExternalTo1.get() + "\n" +
-                                   "Nummerbereich 2: " + inputExternalFrom2.get() + " - " + inputExternalTo2.get() + "\n" +
-                                   "Nummerbereich 3: " + inputExternalFrom3.get() + " - " + inputExternalTo3.get() + "\n" +
-                                   "Ausgabeverzeichnis: " + siriooutput + "\n" + "\n" +
+                                   "Nummerbereich 1: " + inputExternalFrom1.get() + " - " +
+                                   inputExternalTo1.get() + "\n" +
+                                   "Nummerbereich 2: " + inputExternalFrom2.get() + " - " +
+                                   inputExternalTo2.get() + "\n" +
+                                   "Nummerbereich 3: " + inputExternalFrom3.get() + " - " +
+                                   inputExternalTo3.get() + "\n" +
+                                   "Ausgabeverzeichnis: " + mxoneoutput + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
     if response == 1:
+        customerdata = {"Kundenname": inputKundenname.get(),
+                        "Adresse": inputAdresse.get(),
+                        "Ort": inputOrt.get(),
+                        "Hauptnummer": inputHauptnummer.get(),
+                        "Faxnummer": inputFaxnummer.get(),
+                        "Nummerbereichfrom1": inputExternalFrom1.get(),
+                        "Nummerbereichto1": inputExternalTo1.get(),
+                        "Nummerbereichfrom2": inputExternalFrom2.get(),
+                        "Nummerbereichto2": inputExternalTo2.get(),
+                        "Nummerbereichfrom3": inputExternalFrom3.get(),
+                        "Nummerbereichto3": inputExternalTo3.get()}
         mxonedata = importdata.Importuserdata(mxonepath)
         mxonedata.importuserdata()
         mxonedata.createuserdata()
-        mxonedata.print_users()
+        mxoneexport = exportdata.Exportmxone(mxoneoutput, customerdata, mxonedata.users, "Systemdata")
+        mxoneexport.writemxonedata()
+        messagebox.showinfo("Finish", "Die Doku wurde erfolgreich generiert")
     else:
         print("Abbruch")
 
