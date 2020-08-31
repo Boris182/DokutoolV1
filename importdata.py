@@ -195,9 +195,6 @@ class Importsystemdata():
             self.ts_aboutdata = file.readlines()
             print(self.ts_aboutdata[0])
 
-
-
-
 class Importsiriodata():
 
     def __init__(self):
