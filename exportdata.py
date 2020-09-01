@@ -77,7 +77,8 @@ class Exportmxone():
 
         # Befüllt das zweite Sheet mit allen Möglichen Durchwahlen
         for i in self.externalnumbers:
-            self.wsmxdw.cell(row=self.rd, column=1).value = self.externalnumbers[i]
+            self.wsmxdw.cell(row=self.rd, column=1).value = str(i).replace("41", "0", 1)
+            self.rd = self.rd + 1
 
 
         # Schreibt die Userdaten in die Excel Datei
@@ -108,7 +109,7 @@ class Exportmxone():
             self.wsmxuser.cell(row=self.ru, column=9).value = self.userdata[i][11]
 
             # Row Plus 1
-            self.r = self.ru + 1
+            self.ru = self.ru + 1
 
 
         #Speichert die Datei als Kopie

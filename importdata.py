@@ -302,6 +302,7 @@ class Importuserdata():
         except AttributeError:
             print("Keine Daten")
 
+
         # Externe Nummern nach Intern
         for e in self.extnumberrange:
             if self.customerdata["Provider"] == "sbcon":
@@ -342,7 +343,7 @@ class Importsystemdata():
 
     def importsystemdata(self):
 
-        with open("C:/Source20200820/ts_about") as file:
+        with open(self.path + "/ts_about") as file:
             print("Load Extension File")
             self.ts_aboutdata = file.readlines()
             print(self.ts_aboutdata)
@@ -357,7 +358,7 @@ class Importsystemdata():
                 self.systemdata["pmversion"] = i.partition(" MX-ONE Provisioning Manager ")[2].replace(" :\n", "", 1)
 
 
-        with open("C:/Source20200820/mxone_data") as file:
+        with open(self.path + "/mxone_data") as file:
             print("Load Extension File")
             self.mxone_datadata = file.readlines()
             print(self.mxone_datadata)
@@ -373,7 +374,7 @@ class Importsystemdata():
                 # 0 ist Server Name, 1 ist IP des Lims, 3 ist IP der DB
                 self.systemdata["Cassandra " + i[0]] = [i[1], i[3]]
 
-        with open("C:/Source20200820/media_gateway_info_general") as file:
+        with open(self.path + "/media_gateway_info_general") as file:
             print("Load Extension File")
             self.mgudata = file.readlines()
             print(self.mgudata)
