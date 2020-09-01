@@ -14,6 +14,8 @@ class Exportmxone():
         self.ru = 8
         # Start Row für Durchwahlen Row Durchwahlen
         self.rd = 10
+        # Start Row für Systemdaten
+        self.rs = 7
 
         # Pfad der Vorlage
         self.wbmx = load_workbook("./files/PBX_Doku_Vorlage.xlsx")
@@ -42,6 +44,36 @@ class Exportmxone():
         self.wsmxuser.cell(row=3, column=11).value = str(self.customerdata["Nummerbereichfrom2"]) + " - " + str(self.customerdata["Nummerbereichto2"])
         # Nummerbereich 3
         self.wsmxuser.cell(row=4, column=11).value = str(self.customerdata["Nummerbereichfrom3"]) + " - " + str(self.customerdata["Nummerbereichto3"])
+
+        # Schreibt alle Systemdaten in das Excel
+        # MX-One Version
+        self.wsmxsystem.cell(row=3, column=2).value = str(self.systemdata["mxversion"])
+        # SNM Version
+        self.wsmxsystem.cell(row=4, column=2).value = str(self.systemdata["snmversion"])
+        # PM Version
+        self.wsmxsystem.cell(row=5, column=2).value = str(self.systemdata["pmversion"])
+
+        for i in self.systemdata:
+            if "Cassandra" in i:
+                self.wsmxsystem.cell(row=self.rs, column=1).value = str(i)
+                self.wsmxsystem.cell(row=self.rs, column=2).value = "Lim IP: " + str(self.systemdata[i][0])
+                self.wsmxsystem.cell(row=self.rs, column=3).value = "DB IP: " + str(self.systemdata[i][1])
+                self.rs = self.rs + 1
+            elif "lim" in i:
+                self.wsmxsystem.cell(row=self.rs, column=1).value = str(i)
+                self.wsmxsystem.cell(row=self.rs, column=2).value = str(self.systemdata[i][0])
+                self.wsmxsystem.cell(row=self.rs, column=3).value = "IP: " + str(self.systemdata[i][1])
+                self.rs = self.rs + 1
+            elif "gateway" in i:
+                self.wsmxsystem.cell(row=self.rs, column=1).value = str(i)
+                self.wsmxsystem.cell(row=self.rs, column=2).value = "MGU: " + str(self.systemdata[i][0])
+                self.wsmxsystem.cell(row=self.rs, column=3).value = "SW: " + str(self.systemdata[i][1])
+                self.wsmxsystem.cell(row=self.rs, column=4).value = "Typ: " + str(self.systemdata[i][2])
+                self.wsmxsystem.cell(row=self.rs, column=5).value = "HW Rev: " + str(self.systemdata[i][3])
+                self.wsmxsystem.cell(row=self.rs, column=6).value = "SN: " + str(self.systemdata[i][4])
+                self.rs = self.rs + 1
+
+
 
         # Befüllt das zweite Sheet mit allen Möglichen Durchwahlen
         for i in self.externalnumbers:
@@ -78,6 +110,7 @@ class Exportmxone():
             # Row Plus 1
             self.r = self.ru + 1
 
+
         #Speichert die Datei als Kopie
         self.wbmx.save(self.exportpath + "/PBX_Doku_" + self.customerdata["Kundenname"] +
                        datetime.now().strftime("%Y%m%d_%I%M%S") + ".xlsx")
@@ -95,7 +128,7 @@ class Exportsirio():
         # Pfad der Vorlage
         self.wbsirio = load_workbook("c:/Sirio_Doku_Vorlage.xlsx")
         # Sheet auswählen wo die Daten hingeschrieben werden
-        self.wssirio = self.wbmx['Alarmmatrix']
+        self.wssirio = self.wbsirio['Alarmmatrix']
 
         # Kundenname
         self.wssirio.cell(row=2, column=4).value = self.customerdata["Kundenname"]

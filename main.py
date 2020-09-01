@@ -108,14 +108,18 @@ def createmxonedoc():
                         "Nummerbereichto3": inputExternalTo3.get(),
                         "Provider": provider.get()}
 
-        mxonedata = importdata.Importuserdata(mxonepath, customerdata)
-        mxonedata.importuserdata()
-        mxonedata.createuserdata()
+        mxoneuserdata = importdata.Importuserdata(mxonepath, customerdata)
+        mxoneuserdata.importuserdata()
+        mxoneuserdata.createuserdata()
+
+        mxonesystemdata = importdata.Importsystemdata(mxonepath)
+        mxonesystemdata.importsystemdata()
+
         mxoneexport = exportdata.Exportmxone(mxoneoutput,
                                              customerdata,
-                                             mxonedata.users,
-                                             "Systemdata",
-                                             mxonedata.extnumberrange)
+                                             mxoneuserdata.users,
+                                             mxonesystemdata.systemdata,
+                                             mxoneuserdata.extnumberrange)
         mxoneexport.writemxonedata()
         messagebox.showinfo("Finish", "Die Doku wurde erfolgreich generiert")
     else:

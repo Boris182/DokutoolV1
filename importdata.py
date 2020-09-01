@@ -30,36 +30,43 @@ class Importuserdata():
             print("Load Extension File")
             self.extensiondata = file.readlines()
             print(self.extensiondata[0])
+            file.close()
 
         with open(self.path + "/name1", encoding='utf-8') as file:
             print("Load Extension File")
             self.name1data = file.readlines()
             print(self.name1data[0])
+            file.close()
 
         with open(self.path + "/dect_extension") as file:
             print("Load Extension File")
             self.dect_extensiondata = file.readlines()
             print(self.dect_extensiondata[0])
+            file.close()
 
         with open(self.path + "/ip_extension") as file:
             print("Load Extension File")
             self.ip_extensiondata = file.readlines()
             print(self.ip_extensiondata[0])
+            file.close()
 
         with open(self.path + "/EXDDP") as file:
             print("Load Extension File")
             self.exddpdata = file.readlines()
             print(self.exddpdata[0])
+            file.close()
 
         with open(self.path + "/KSDDP") as file:
             print("Load Extension File")
             self.ksddpdata = file.readlines()
             print(self.ksddpdata[0])
+            file.close()
 
         with open(self.path + "/parallel_ringing") as file:
             print("Load Extension File")
             self.parallel_ringingdata = file.readlines()
             print(self.parallel_ringingdata[0])
+            file.close()
 
         with open(self.path + "/number_conversion_print") as file:
             self.nucondata = file.readlines()
@@ -98,6 +105,7 @@ class Importuserdata():
                     self.convdata.append([numberentry, convtype, numtype, pre, truncate])
 
             print(self.nucondata[0])
+            file.close()
 
     # Erstellt und Sortiert das User Dictionary, fügt alle Dateien zusammen und ergänzt diese
     def createuserdata(self):
@@ -327,14 +335,69 @@ class Importsystemdata():
 
     def __init__(self, path):
         self.path = path
-        self.system = {}
+        self.systemdata = {}
         self.ts_aboutdata = []
+        self.mxone_datadata = []
+        self.mgudata = []
 
     def importsystemdata(self):
-        with open(self.path + "/ts_about") as file:
+
+        with open("C:/Source20200820/ts_about") as file:
             print("Load Extension File")
             self.ts_aboutdata = file.readlines()
-            print(self.ts_aboutdata[0])
+            print(self.ts_aboutdata)
+            file.close()
+
+        for i in self.ts_aboutdata:
+            if "Version: " in i:
+                self.systemdata["mxversion"] = i.partition("Version: ")[2].replace("\n", "", 1)
+            elif " MX-ONE Service Node Manager " in i:
+                self.systemdata["snmversion"] = i.partition(" MX-ONE Service Node Manager ")[2].replace(" :\n", "", 1)
+            elif " MX-ONE Provisioning Manager " in i:
+                self.systemdata["pmversion"] = i.partition(" MX-ONE Provisioning Manager ")[2].replace(" :\n", "", 1)
+
+
+        with open("C:/Source20200820/mxone_data") as file:
+            print("Load Extension File")
+            self.mxone_datadata = file.readlines()
+            print(self.mxone_datadata)
+            file.close()
+
+        for i in self.mxone_datadata:
+            if "lim" in i:
+                i = i.split()
+                # 1 ist Hostname, 2 ist IP, 3 ist lim x
+                self.systemdata[i[3]] = [i[1], i[2]]
+            elif "c-" in i:
+                i = i.split()
+                # 0 ist Server Name, 1 ist IP des Lims, 3 ist IP der DB
+                self.systemdata["Cassandra " + i[0]] = [i[1], i[3]]
+
+        with open("C:/Source20200820/media_gateway_info_general") as file:
+            print("Load Extension File")
+            self.mgudata = file.readlines()
+            print(self.mgudata)
+            file.close()
+
+            gwnumber = 0
+            for l in self.mgudata:
+                if " SW information" in l:
+                    l = l.split()
+                    gwnumber = gwnumber + 1
+                    self.systemdata["gateway" + str(gwnumber)] = [l[1]]
+                    print("gateway" + str(gwnumber))
+                elif "MGW version: " in l:
+                    l = l.split()
+                    self.systemdata["gateway" + str(gwnumber)].append(l[2])
+                elif "Media gateway type: " in l:
+                    l = l.split()
+                    self.systemdata["gateway" + str(gwnumber)].append(l[3] + " " + l[4])
+                elif "Board revision: " in l:
+                    l = l.split()
+                    self.systemdata["gateway" + str(gwnumber)].append(l[2])
+                elif "Board serial number: " in l:
+                    l = l.split()
+                    self.systemdata["gateway" + str(gwnumber)].append(l[3])
 
 
 class Importsiriodata():
