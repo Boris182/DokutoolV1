@@ -1,8 +1,9 @@
 import fdb
 
+
 class Importuserdata():
 
-    def __init__(self, path):
+    def __init__(self, path, customerdata):
         self.users = {}
         self.path = path
         self.extensiondata = []
@@ -15,6 +16,9 @@ class Importuserdata():
         self.nucondata = []
         self.convdata = []
         self.users = {}
+        self.customerdata = customerdata
+        self.extnumberrange = []
+        self.clipdata = []
 
     def print_users(self):
         for i in self.users:
@@ -59,11 +63,94 @@ class Importuserdata():
 
         with open(self.path + "/number_conversion_print") as file:
             self.nucondata = file.readlines()
+            toentrypos = self.nucondata[1].find("Cnvtyp")
+            tocnvtyppos = self.nucondata[1].find("Numtyp")
+            tonumtyppos = self.nucondata[1].find("Rou")
+            totardestpos = self.nucondata[1].find("Pre")
+            toprepos = self.nucondata[1].find("Trc")
+            totrcpos = self.nucondata[1].find("Newtyp")
+
+            for i in range(len(self.nucondata)):
+                if self.nucondata[i][0].isdigit():
+                    # Numberentry Data
+                    numberentry = self.nucondata[i][:toentrypos].strip()
+                    # Conversiontype Data
+                    convtype = self.nucondata[i][toentrypos:tocnvtyppos].strip()
+                    # Numbertype Data
+                    numtype = self.nucondata[i][tocnvtyppos:tonumtyppos].strip()
+                    # Reserve Route Data
+                    # Reserve print(nucondata[i][tonumtyppos:toroupos])
+                    # Reserve Tardest Data
+                    # Reserve print(nucondata[i][toroupos:totardestpos])
+                    # Pre Data
+                    pre = self.nucondata[i][totardestpos:toprepos].strip()
+                    # Truncate Data
+                    truncate = self.nucondata[i][toprepos:totrcpos].strip()
+                    # Reserve Newtype Data
+                    # Reserve print(nucondata[i][totrcpos:tonewtyppos])
+                    # Reserve Cont Data
+                    # Reserve print(nucondata[i][tonewtyppos:tocontpos])
+                    # Reserve BCAP Data
+                    # Reserve print(nucondata[i][tocontpos:tobcappos])
+                    # Reserve Hlc Data
+                    # Reserve print(nucondata[i][tobcappos:])
+                    # Reserve print(numberentry)
+                    self.convdata.append([numberentry, convtype, numtype, pre, truncate])
+
             print(self.nucondata[0])
 
-    #Erstellt und Sortiert das User Dictionary, fügt alle Dateien zusammen und ergänzt diese
+    # Erstellt und Sortiert das User Dictionary, fügt alle Dateien zusammen und ergänzt diese
     def createuserdata(self):
-        # Erstellen des User Dictionary
+        # Prüfen was für ein Provider, für die Externe Nummerzuweisung
+
+        # SBCON?
+        if self.customerdata["Provider"] == "sbcon":
+            try:
+                self.ext1from = int(self.customerdata["Nummerbereichfrom1"].replace("0", "41", 1))
+                self.ext1to = int(self.customerdata["Nummerbereichto1"].replace("0", "41", 1))
+            except ValueError:
+                "Nummerbereich 1 nicht angegeben"
+            try:
+                self.ext2from = int(self.customerdata["Nummerbereichfrom2"].replace("0", "41", 1))
+                self.ext2to = int(self.customerdata["Nummerbereichto2"].replace("0", "41", 1))
+            except ValueError:
+                "Nummerbereich 2 nicht angegeben"
+            try:
+                self.ext3from = int(self.customerdata["Nummerbereichfrom3"].replace("0", "41", 1))
+                self.ext3to = int(self.customerdata["Nummerbereichto3"].replace("0", "41", 1))
+            except ValueError:
+                "Nummerbereich 3 nicht angegeben"
+
+        # Combridge?
+        elif self.customerdata["Provider"] == "combridge":
+            try:
+                self.ext1from = int(self.customerdata["Nummerbereichfrom1"])
+                self.ext1to = int(self.customerdata["Nummerbereichto1"])
+            except ValueError:
+                "Nummerbereich 1 nicht angegeben"
+
+            try:
+                self.ext2from = int(self.customerdata["Nummerbereichfrom2"])
+                self.ext2to = int(self.customerdata["Nummerbereichto2"])
+            except ValueError:
+                "Nummerbereich 2 nicht angegeben"
+
+            try:
+                self.ext3from = int(self.customerdata["Nummerbereichfrom3"])
+                self.ext3to = int(self.customerdata["Nummerbereichto3"])
+            except ValueError:
+                "Nummerbereich 3 nicht angegeben"
+
+        # Kein Provider ausgewählt, es wird einfach ein Integer gemacht
+        else:
+            self.ext1from = int(self.customerdata["Nummerbereichfrom1"])
+            self.ext1to = int(self.customerdata["Nummerbereichto1"])
+            self.ext2from = int(self.customerdata["Nummerbereichfrom2"])
+            self.ext2to = int(self.customerdata["Nummerbereichto2"])
+            self.ext3from = int(self.customerdata["Nummerbereichfrom3"])
+            self.ext3to = int(self.customerdata["Nummerbereichto3"])
+
+        # Erstellen und Befüllen des User Dictionary
 
         # Verarbeitet die Extension Daten in das User Dictionary
         for i in range(len(self.extensiondata)):
@@ -146,7 +233,6 @@ class Importuserdata():
                 else:
                     self.users[number] = list
 
-
         # Verarbeitet die KSDDP Daten in das User Dictionary
         for i in range(len(self.ksddpdata)):
             if self.ksddpdata[i][0].isdigit():
@@ -165,11 +251,15 @@ class Importuserdata():
                 else:
                     self.users[number] = list
 
+        # Verarbeitet die  Parallel Ringing Daten in das User Dictionary
         for i in range(len(self.parallel_ringingdata)):
             if self.parallel_ringingdata[i][0].isdigit():
                 userdata = self.parallel_ringingdata[i].split()
 
                 number = str(userdata[0])
+                secondary1 = ""
+                secondary2 = ""
+                list = []
                 if len(userdata) == 4:
                     secondary1 = str(userdata[1])
                     secondary2 = str(userdata[2])
@@ -179,13 +269,59 @@ class Importuserdata():
                     secondary2 = ""
                     list = [number, "", "", "", "", "", "", secondary1, "", "", "", ""]
 
-
                 if number in self.users:
                     self.users[number][0] = number
                     self.users[number][7] = secondary1
                     self.users[number][8] = secondary2
                 else:
                     self.users[number] = list
+
+        # Verarbeitet die Number Conversion Daten im das User Dictionary
+        # Verbindet alle Externen Nummerbereiche in eine Liste, mehrere Ranges sogesagt
+
+        try:
+            self.extnumberrange.extend(range(self.ext1from, self.ext1to + 1))
+        except AttributeError:
+            print("Keine Daten")
+
+        try:
+            self.extnumberrange.extend(range(self.ext2from, self.ext2to + 1))
+        except AttributeError:
+            print("Keine Daten")
+
+        try:
+            self.extnumberrange.extend(range(self.ext3from, self.ext3to + 1))
+        except AttributeError:
+            print("Keine Daten")
+
+        # Externe Nummern nach Intern
+        for e in self.extnumberrange:
+            if self.customerdata["Provider"] == "sbcon":
+                e = str(e)
+            elif self.customerdata["Provider"] == "combridge":
+                e = "0" + str(e)
+            for c in range(len(self.convdata)):
+                if e[:len(self.convdata[c][0])] == self.convdata[c][0] and self.convdata[c][1] == "0":
+                    print("Extern - Intern")
+                    self.intnumber = self.convdata[c][0][int(self.convdata[c][4]):] + self.convdata[c][3]
+                    self.extnumber = self.convdata[c][0].replace("41", "0", 1)
+
+                    if self.intnumber in self.users:
+                        self.users[self.intnumber][10] = str(self.extnumber)
+
+        # Clip nach Extern
+        # Clip Daten erstellen
+        for i in range(len(self.convdata)):
+            if self.convdata[i][1] == "1":
+                self.clipdata.append([self.convdata[i][0], self.convdata[i][3], self.convdata[i][4]])
+
+        for d in self.users:
+            for c in range(len(self.clipdata)):
+                if d[:len(self.clipdata[c][0])] == self.clipdata[c][0]:
+                    self.intnumber = d
+                    self.extnumber = str(self.clipdata[c][1]) + str(d[int(self.clipdata[c][2]):])
+                    self.users[self.intnumber][11] = str(self.extnumber.replace("41", "0", 1))
+
 
 class Importsystemdata():
 
@@ -195,11 +331,11 @@ class Importsystemdata():
         self.ts_aboutdata = []
 
     def importsystemdata(self):
-
         with open(self.path + "/ts_about") as file:
             print("Load Extension File")
             self.ts_aboutdata = file.readlines()
             print(self.ts_aboutdata[0])
+
 
 class Importsiriodata():
 
@@ -224,8 +360,3 @@ class Importsiriodata():
         print(self.dataEspa)
         print(self.dataJob)
         print(self.dataCont)
-
-
-
-
-

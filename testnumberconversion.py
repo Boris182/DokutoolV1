@@ -1,3 +1,12 @@
+numberrange = []
+
+numberrange.extend(range(100,199))
+numberrange.extend(range(300,399))
+print(numberrange)
+
+
+
+
 import importdata
 
 userdata = importdata.Importuserdata("c:/Source20200821")

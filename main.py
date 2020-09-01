@@ -16,6 +16,9 @@ siriooutput = ""
 mxoneversion = StringVar()
 mxoneversion.set("Select Version")
 
+provider = StringVar()
+provider.set("Select Provider")
+
 sirioversion = StringVar()
 sirioversion.set("Select Version")
 
@@ -24,48 +27,97 @@ sirioversion.set("Select Version")
 def openmxonedir():
     global mxonepath
     mxonepath = filedialog.askdirectory(initialdir="c:/")
-    labelPathMxone = Label(frameMxone, text="Path: " + mxonepath).grid(row=3, column=0)
+    labelPathMxone = Label(frameMxone, text="Path: " + mxonepath)
+    labelPathMxone.grid(row=3, column=0)
     return mxonepath
 
 
 def opensiriofile():
     global siriopath
     siriopath = filedialog.askopenfilename(initialdir="c:/")
-    labelPathSirio = Label(frameSirio, text="Path: " + siriopath).grid(row=3, column=0)
+    labelPathSirio = Label(frameSirio, text="Path: " + siriopath)
+    labelPathSirio.grid(row=3, column=0)
     return siriopath
 
 
 def outputmxonedir():
     global mxoneoutput
     mxoneoutput = filedialog.askdirectory(initialdir="c:/")
-    labelOutputMxone = Label(frameMxone, text="Path: " + mxoneoutput).grid(row=6, column=0)
+    labelOutputMxone = Label(frameMxone, text="Path: " + mxoneoutput)
+    labelOutputMxone.grid(row=6, column=0)
     return mxoneoutput
 
 
 def outputsiriodir():
     global siriooutput
     siriooutput = filedialog.askdirectory(initialdir="c:/")
-    labelOutputSirio = Label(frameSirio, text="Path: " + siriooutput).grid(row=6, column=0)
+    labelOutputSirio = Label(frameSirio, text="Path: " + siriooutput)
+    labelOutputSirio.grid(row=6, column=0)
     return siriooutput
 
 
 def checkmxonefiles():
     response = messagebox.askyesno("Kontrolle der Daten",
-                                   "Kundenname: " + inputKundenname.get() + "\n" +
-                                   "Adresse: " + inputAdresse.get() + "\n" +
-                                   "Ort: " + inputOrt.get() + "\n" +
-                                   "Hauptnummer: " + inputHauptnummer.get() + "\n" +
-                                   "Faxnummer: " + inputFaxnummer.get() + "\n" +
-                                   "Nummerbereich 1: " + inputExternalFrom1.get() +
-                                   " - " + inputExternalTo1.get() + "\n" +
-                                   "Nummerbereich 2: " + inputExternalFrom2.get() +
-                                   " - " + inputExternalTo2.get() + "\n" +
-                                   "Nummerbereich 3: " + inputExternalFrom3.get() +
-                                   " - " + inputExternalTo3.get() + "\n" +
-                                   "Ausgabeverzeichnis: " + mxoneoutput + "\n" + "\n" +
+                                   "Kundenname: " + str(inputKundenname.get()) + "\n" +
+                                   "Adresse: " + str(inputAdresse.get()) + "\n" +
+                                   "Ort: " + str(inputOrt.get()) + "\n" +
+                                   "Hauptnummer: " + str(inputHauptnummer.get()) + "\n" +
+                                   "Faxnummer: " + str(inputFaxnummer.get()) + "\n" +
+                                   "Nummerbereich 1: " + str(inputExternalFrom1.get()) + " - " +
+                                   str(inputExternalTo1.get()) + "\n" +
+                                   "Nummerbereich 2: " + str(inputExternalFrom2.get()) + " - " +
+                                   str(inputExternalTo2.get()) + "\n" +
+                                   "Nummerbereich 3: " + str(inputExternalFrom3.get()) + " - " +
+                                   str(inputExternalTo3.get()) + "\n" +
+                                   "Ausgabeverzeichnis: " + str(mxoneoutput) + "\n" +
+                                   "Provider: " + str(provider.get()) + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
     if response == 1:
         print("Es wird ausgeführt")
+    else:
+        print("Abbruch")
+
+
+def createmxonedoc():
+    response = messagebox.askyesno("Kontrolle der Daten",
+                                   "Kundenname: " + str(inputKundenname.get()) + "\n" +
+                                   "Adresse: " + str(inputAdresse.get()) + "\n" +
+                                   "Ort: " + str(inputOrt.get()) + "\n" +
+                                   "Hauptnummer: " + str(inputHauptnummer.get()) + "\n" +
+                                   "Faxnummer: " + str(inputFaxnummer.get()) + "\n" +
+                                   "Nummerbereich 1: " + str(inputExternalFrom1.get()) + " - " +
+                                   str(inputExternalTo1.get()) + "\n" +
+                                   "Nummerbereich 2: " + str(inputExternalFrom2.get()) + " - " +
+                                   str(inputExternalTo2.get()) + "\n" +
+                                   "Nummerbereich 3: " + str(inputExternalFrom3.get()) + " - " +
+                                   str(inputExternalTo3.get()) + "\n" +
+                                   "Ausgabeverzeichnis: " + str(mxoneoutput) + "\n" +
+                                   "Provider: " + str(provider.get()) + "\n" + "\n" +
+                                   "Sind Sie sich sicher? Stimmen die Daten?")
+    if response == 1:
+        customerdata = {"Kundenname": inputKundenname.get(),
+                        "Adresse": inputAdresse.get(),
+                        "Ort": inputOrt.get(),
+                        "Hauptnummer": inputHauptnummer.get(),
+                        "Faxnummer": inputFaxnummer.get(),
+                        "Nummerbereichfrom1": inputExternalFrom1.get(),
+                        "Nummerbereichto1": inputExternalTo1.get(),
+                        "Nummerbereichfrom2": inputExternalFrom2.get(),
+                        "Nummerbereichto2": inputExternalTo2.get(),
+                        "Nummerbereichfrom3": inputExternalFrom3.get(),
+                        "Nummerbereichto3": inputExternalTo3.get(),
+                        "Provider": provider.get()}
+
+        mxonedata = importdata.Importuserdata(mxonepath, customerdata)
+        mxonedata.importuserdata()
+        mxonedata.createuserdata()
+        mxoneexport = exportdata.Exportmxone(mxoneoutput,
+                                             customerdata,
+                                             mxonedata.users,
+                                             "Systemdata",
+                                             mxonedata.extnumberrange)
+        mxoneexport.writemxonedata()
+        messagebox.showinfo("Finish", "Die Doku wurde erfolgreich generiert")
     else:
         print("Abbruch")
 
@@ -124,42 +176,6 @@ def createsiriodoc():
         print("Abbruch")
 
 
-def createmxonedoc():
-    response = messagebox.askyesno("Kontrolle der Daten",
-                                   "Kundenname: " + inputKundenname.get() + "\n" +
-                                   "Adresse: " + inputAdresse.get() + "\n" +
-                                   "Ort: " + inputOrt.get() + "\n" +
-                                   "Hauptnummer: " + inputHauptnummer.get() + "\n" +
-                                   "Faxnummer: " + inputFaxnummer.get() + "\n" +
-                                   "Nummerbereich 1: " + inputExternalFrom1.get() + " - " +
-                                   inputExternalTo1.get() + "\n" +
-                                   "Nummerbereich 2: " + inputExternalFrom2.get() + " - " +
-                                   inputExternalTo2.get() + "\n" +
-                                   "Nummerbereich 3: " + inputExternalFrom3.get() + " - " +
-                                   inputExternalTo3.get() + "\n" +
-                                   "Ausgabeverzeichnis: " + mxoneoutput + "\n" + "\n" +
-                                   "Sind Sie sich sicher? Stimmen die Daten?")
-    if response == 1:
-        customerdata = {"Kundenname": inputKundenname.get(),
-                        "Adresse": inputAdresse.get(),
-                        "Ort": inputOrt.get(),
-                        "Hauptnummer": inputHauptnummer.get(),
-                        "Faxnummer": inputFaxnummer.get(),
-                        "Nummerbereichfrom1": inputExternalFrom1.get(),
-                        "Nummerbereichto1": inputExternalTo1.get(),
-                        "Nummerbereichfrom2": inputExternalFrom2.get(),
-                        "Nummerbereichto2": inputExternalTo2.get(),
-                        "Nummerbereichfrom3": inputExternalFrom3.get(),
-                        "Nummerbereichto3": inputExternalTo3.get()}
-        mxonedata = importdata.Importuserdata(mxonepath)
-        mxonedata.importuserdata()
-        mxonedata.createuserdata()
-        mxoneexport = exportdata.Exportmxone(mxoneoutput, customerdata, mxonedata.users, "Systemdata")
-        mxoneexport.writemxonedata()
-        messagebox.showinfo("Finish", "Die Doku wurde erfolgreich generiert")
-    else:
-        print("Abbruch")
-
 # Frames initiieren
 frameInfo = LabelFrame(root, text="Info", padx=5, pady=5)
 frameInfo.grid(row=0, column=0, padx=5, pady=5)
@@ -178,11 +194,16 @@ labelInfo = Label(frameInfo, text="Das ist die Info").grid()
 # Kundendaten Frame-------------------------------------------------
 
 # Labels
-labelKundenname = Label(frameKundendaten, text="Kundenname: ").grid(row=0, column=0)
-labelAdresse = Label(frameKundendaten, text="Adresse: ").grid(row=1, column=0)
-labelOrt = Label(frameKundendaten, text="PLZ Ort: ").grid(row=2, column=0)
-labelHauptnummer = Label(frameKundendaten, text="Hauptnummer: ").grid(row=3, column=0)
-labelFaxnummer = Label(frameKundendaten, text="Faxnummer: ").grid(row=4, column=0)
+labelKundenname = Label(frameKundendaten, text="Kundenname: ")
+labelKundenname.grid(row=0, column=0)
+labelAdresse = Label(frameKundendaten, text="Adresse: ")
+labelAdresse.grid(row=1, column=0)
+labelOrt = Label(frameKundendaten, text="PLZ Ort: ")
+labelOrt.grid(row=2, column=0)
+labelHauptnummer = Label(frameKundendaten, text="Hauptnummer: ")
+labelHauptnummer.grid(row=3, column=0)
+labelFaxnummer = Label(frameKundendaten, text="Faxnummer: ")
+labelFaxnummer.grid(row=4, column=0)
 
 # Input Felder
 inputKundenname = Entry(frameKundendaten, borderwidth=2, width=30)
@@ -226,15 +247,20 @@ labelInfoOutputMxone = Label(frameMxone, text="Wähle das Output Verzeichniss").
 labelOutputMxone = Label(frameMxone, text="Path: " + mxoneoutput).grid(row=6, column=0)
 
 # Buttons
-buttonPfadMxone = Button(frameMxone, text="Browse", width=30, command=openmxonedir).grid(row=2, column=0)
-buttonOutputMxone = Button(frameMxone, text="Browse", width=30, command=outputmxonedir).grid(row=5, column=0)
-buttonCheckMxone = Button(frameMxone, text="Check Files", width=30, command=checkmxonefiles).grid(row=8, column=0)
+buttonPfadMxone = Button(frameMxone, text="Browse", width=30, command=openmxonedir)
+buttonPfadMxone.grid(row=2, column=0)
+buttonOutputMxone = Button(frameMxone, text="Browse", width=30, command=outputmxonedir)
+buttonOutputMxone.grid(row=5, column=0)
+buttonCheckMxone = Button(frameMxone, text="Check Files", width=30, command=checkmxonefiles)
+buttonCheckMxone.grid(row=8, column=0)
 buttonCreateMxone = Button(frameMxone, text="Create", width=30, command=createmxonedoc)
-buttonCreateMxone.grid(row=11, column=0)
+buttonCreateMxone.grid(row=12, column=0)
 
 # Dropdowns
 dropMxoneVersion = OptionMenu(frameMxone, mxoneversion, "MX-One 6.X", "MX-One 7.X")
 dropMxoneVersion.grid(row=10, column=0)
+dropProvider = OptionMenu(frameMxone, provider, "sbcon", "combridge")
+dropProvider.grid(row=11, column=0)
 
 # Sirio Frame
 # Labels

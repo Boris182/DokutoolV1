@@ -2,19 +2,27 @@ from openpyxl import load_workbook
 from datetime import datetime
 
 class Exportmxone():
-    def __init__(self, exportpath, customerdata, userdata, systemdata):
+    def __init__(self, exportpath, customerdata, userdata, systemdata, externalnumers):
         self.exportpath = exportpath
         self.customerdata = customerdata
         self.userdata = userdata
         self.systemdata = systemdata
+        self.externalnumbers = externalnumers
 
     def writemxonedata(self):
-        # Start Row für Userdaten in der Excel
-        self.r = 8
+        # Start Row für Userdaten in der Excel Row Userdata
+        self.ru = 8
+        # Start Row für Durchwahlen Row Durchwahlen
+        self.rd = 10
+
         # Pfad der Vorlage
-        self.wbmx = load_workbook("c:/PBX_Doku_Vorlage.xlsx")
+        self.wbmx = load_workbook("./files/PBX_Doku_Vorlage.xlsx")
         # Sheet auswählen wo die Daten hingeschrieben werden
         self.wsmxuser = self.wbmx['Kundendatenliste']
+        # Sheet auswähen wo die Durchwahlen hingerschrieben werden
+        self.wsmxdw = self.wbmx['Durchwahl Liste']
+        # Sheet auswähen wo die Systemdaten hingerschrieben werden
+        self.wsmxsystem = self.wbmx['System']
 
         # Kundenname
         self.wsmxuser.cell(row=2, column=2).value = self.customerdata["Kundenname"]
@@ -35,32 +43,40 @@ class Exportmxone():
         # Nummerbereich 3
         self.wsmxuser.cell(row=4, column=11).value = str(self.customerdata["Nummerbereichfrom3"]) + " - " + str(self.customerdata["Nummerbereichto3"])
 
+        # Befüllt das zweite Sheet mit allen Möglichen Durchwahlen
+        for i in self.externalnumbers:
+            self.wsmxdw.cell(row=self.rd, column=1).value = self.externalnumbers[i]
+
 
         # Schreibt die Userdaten in die Excel Datei
         for i in self.userdata:
             # Number
-            self.wsmxuser.cell(row=self.r, column=2).value = self.userdata[i][0]
+            self.wsmxuser.cell(row=self.ru, column=2).value = self.userdata[i][0]
             # TYP
-            self.wsmxuser.cell(row=self.r, column=3).value = self.userdata[i][1]
+            self.wsmxuser.cell(row=self.ru, column=3).value = self.userdata[i][1]
             # HW Adresse / IP
-            self.wsmxuser.cell(row=self.r, column=4).value = self.userdata[i][2]
+            self.wsmxuser.cell(row=self.ru, column=4).value = self.userdata[i][2]
             # Name 1
-            self.wsmxuser.cell(row=self.r, column=7).value = self.userdata[i][3]
+            self.wsmxuser.cell(row=self.ru, column=7).value = self.userdata[i][3]
             # Name 2
-            self.wsmxuser.cell(row=self.r, column=8).value = self.userdata[i][4]
+            self.wsmxuser.cell(row=self.ru, column=8).value = self.userdata[i][4]
             # Berechtigungen CSP CAT
-            self.wsmxuser.cell(row=self.r, column=10).value = self.userdata[i][5]
+            self.wsmxuser.cell(row=self.ru, column=10).value = self.userdata[i][5]
             # Server
-            # self.wsmxuser.cell(row=self.r, column=5).value = self.userdata[i][6]
+            # self.wsmxuser.cell(row=self.ru, column=5).value = self.userdata[i][6]
             # Secondary Dir 1
-            self.wsmxuser.cell(row=self.r, column=12).value = self.userdata[i][7]
+            self.wsmxuser.cell(row=self.ru, column=12).value = self.userdata[i][7]
             # Secondary Dir 2
-            self.wsmxuser.cell(row=self.r, column=13).value = self.userdata[i][8]
+            self.wsmxuser.cell(row=self.ru, column=13).value = self.userdata[i][8]
             # Third
-            self.wsmxuser.cell(row=self.r, column=11).value = self.userdata[i][9]
+            self.wsmxuser.cell(row=self.ru, column=11).value = self.userdata[i][9]
+            # Externnummer von Extern nach Intern
+            self.wsmxuser.cell(row=self.ru, column=1).value = self.userdata[i][10]
+            # CLIP
+            self.wsmxuser.cell(row=self.ru, column=9).value = self.userdata[i][11]
 
             # Row Plus 1
-            self.r = self.r + 1
+            self.r = self.ru + 1
 
         #Speichert die Datei als Kopie
         self.wbmx.save(self.exportpath + "/PBX_Doku_" + self.customerdata["Kundenname"] +
