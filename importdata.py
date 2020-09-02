@@ -93,6 +93,8 @@ class Importuserdata():
                     pre = self.nucondata[i][totardestpos:toprepos].strip()
                     # Truncate Data
                     truncate = self.nucondata[i][toprepos:totrcpos].strip()
+                    if truncate == "":
+                        truncate = "0"
                     # Reserve Newtype Data
                     # Reserve print(nucondata[i][totrcpos:tonewtyppos])
                     # Reserve Cont Data
@@ -373,32 +375,34 @@ class Importsystemdata():
                 i = i.split()
                 # 0 ist Server Name, 1 ist IP des Lims, 3 ist IP der DB
                 self.systemdata["Cassandra " + i[0]] = [i[1], i[3]]
+        try:
+            with open(self.path + "/media_gateway_info_general") as file:
+                print("Load Extension File")
+                self.mgudata = file.readlines()
+                print(self.mgudata)
+                file.close()
 
-        with open(self.path + "/media_gateway_info_general") as file:
-            print("Load Extension File")
-            self.mgudata = file.readlines()
-            print(self.mgudata)
-            file.close()
-
-            gwnumber = 0
-            for l in self.mgudata:
-                if " SW information" in l:
-                    l = l.split()
-                    gwnumber = gwnumber + 1
-                    self.systemdata["gateway" + str(gwnumber)] = [l[1]]
-                    print("gateway" + str(gwnumber))
-                elif "MGW version: " in l:
-                    l = l.split()
-                    self.systemdata["gateway" + str(gwnumber)].append(l[2])
-                elif "Media gateway type: " in l:
-                    l = l.split()
-                    self.systemdata["gateway" + str(gwnumber)].append(l[3] + " " + l[4])
-                elif "Board revision: " in l:
-                    l = l.split()
-                    self.systemdata["gateway" + str(gwnumber)].append(l[2])
-                elif "Board serial number: " in l:
-                    l = l.split()
-                    self.systemdata["gateway" + str(gwnumber)].append(l[3])
+                gwnumber = 0
+                for l in self.mgudata:
+                    if " SW information" in l:
+                        l = l.split()
+                        gwnumber = gwnumber + 1
+                        self.systemdata["gateway" + str(gwnumber)] = [l[1]]
+                        print("gateway" + str(gwnumber))
+                    elif "MGW version: " in l:
+                        l = l.split()
+                        self.systemdata["gateway" + str(gwnumber)].append(l[2])
+                    elif "Media gateway type: " in l:
+                        l = l.split()
+                        self.systemdata["gateway" + str(gwnumber)].append(l[3] + " " + l[4])
+                    elif "Board revision: " in l:
+                        l = l.split()
+                        self.systemdata["gateway" + str(gwnumber)].append(l[2])
+                    elif "Board serial number: " in l:
+                        l = l.split()
+                        self.systemdata["gateway" + str(gwnumber)].append(l[3])
+        except FileNotFoundError:
+            print("File Not Found")
 
 
 class Importsiriodata():

@@ -7,6 +7,8 @@ import exportdata
 root = Tk()
 root.title("MX-Dokumentationstool")
 
+root.iconbitmap("parcom.ico")
+
 mxonepath = ""
 siriopath = ""
 
