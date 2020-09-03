@@ -1,9 +1,9 @@
 import importdata
 import testexcel
 
-#customerdata = {"Kundenname": "00325-Parcom", "Adresse": "Hasliring 1", "Ort": "6032 Emmen"}
+customerdata = {"Kundenname": "00325-Parcom", "Adresse": "Hasliring 1", "Ort": "6032 Emmen"}
 
-#siriodata = importdata.Importsiriodata()
+siriodata = importdata.Importsiriodata()
 #mxonedata = importdata.Importuserdata("C:/Source20200821")
 
 #mxonedata.importuserdata()
@@ -16,6 +16,20 @@ import testexcel
 #mxoneexport.printmxonedata()
 #mxoneexport.writemxonedata()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 mxonesystemdata = {}
 
 with open("C:/Source20200820/ts_about") as file:
@@ -80,3 +94,4 @@ with open("C:/Source20200820/media_gateway_info_general") as file:
 
 for i in mxonesystemdata:
     print(i + " " + str(mxonesystemdata[i]))
+"""

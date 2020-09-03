@@ -127,9 +127,14 @@ class Exportsirio():
 
     def writesiriodata(self):
         # Pfad der Vorlage
-        self.wbsirio = load_workbook("c:/Sirio_Doku_Vorlage.xlsx")
+        self.wbsirio = load_workbook("./files/Sirio_Doku_Vorlage.xlsx")
         # Sheet auswählen wo die Daten hingeschrieben werden
         self.wssirio = self.wbsirio['Alarmmatrix']
+
+        # Start Row für Ereignisse / Alarme
+        self.ra = 9
+        # Start Column für Jobs / Teilnehmer
+        self.cj = 11
 
         # Kundenname
         self.wssirio.cell(row=2, column=4).value = self.customerdata["Kundenname"]
@@ -139,6 +144,32 @@ class Exportsirio():
         self.wssirio.cell(row=3, column=4).value = self.customerdata["Adresse"]
         # Ort
         self.wssirio.cell(row=4, column=4).value = self.customerdata["Ort"]
+        # Daten Sortieren
+        # Eingangskontakte
+        self.contdata.sort(key=lambda cont: cont[1])
+        self.contdata.sort(key=lambda cont: cont[0])
+        # ESPA Alarme
+        self.espadata.sort(key=lambda psa: psa[2])
+
+        for i in range(len(self.contdata)):
+            self.wssirio.cell(row=self.ra, column=1).value = str(i[0])
+            self.wssirio.cell(row=self.ra, column=4).value = str(i[1])
+            self.wssirio.cell(row=self.ra, column=9).value = str(i[8])
+            if "-" in str(i[2]):
+                self.wssirio.cell(row=self.ra, column=6).value = "NC"
+            else:
+                self.wssirio.cell(row=self.ra, column=6).value = "NO"
+            self.ra = self.ra + 1
+
+        for i in range(len(self.espadata)):
+            self.wssirio.cell(row=self.ra, column=1).value = "ESPA Incoming"
+            self.wssirio.cell(row=self.ra, column=5).value = str(i[2])
+            self.wssirio.cell(row=self.ra, column=9).value = str(i[7])
+            self.wssirio.cell(row=self.ra, column=7).value = str(i[3])
+
+        self.ra = self.ra + 1
+
+
 
 
 
