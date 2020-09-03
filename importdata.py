@@ -408,12 +408,36 @@ class Importsystemdata():
 class Importsiriodata():
 
     def __init__(self):
+        self.dataEspa = []
+        self.dataJob = []
+        self.dataCont = []
+        self.dataRefEspa = {}
+        self.dataRefCont = {}
+        self.querydata = {}
+
         con = fdb.connect(dsn='localhost:c:\sirio.gdb', user='sysdba', password='masterkey')
 
         cur = con.cursor()
 
-        cur.execute("select * from ALARM")
-        self.dataAlarm = cur.fetchall()
+        cur.execute("SELECT AL_ESPA.DESCRIPTION, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
+                    "from AL_ESPA "
+                    "right join ALARM on ALARM.ALARM_ID = AL_ESPA.ALARM_ID "
+                    "right join AL_REF_A on AL_REF_A.AGROUP_ID = ALARM.AGROUP_ID "
+                    "full join AL_REF_J on AL_REF_J.JGROUP_ID = AL_REF_A.JGROUP_ID "
+                    "inner join AL_JOB on AL_JOB.JOB_ID = AL_REF_J.JOB_ID "
+                    "WHERE ALARM.ALARM_ID = AL_ESPA.ALARM_ID")
+
+        self.dataRefEspa = cur.fetchall()
+
+        cur.execute("SELECT AL_ESPA.DESCRIPTION, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
+                    "from AL_ESPA "
+                    "right join ALARM on ALARM.ALARM_ID = AL_ESPA.ALARM_ID "
+                    "right join AL_REF_A on AL_REF_A.AGROUP_ID = ALARM.AGROUP_ID "
+                    "full join AL_REF_J on AL_REF_J.JGROUP_ID = AL_REF_A.JGROUP_ID "
+                    "inner join AL_JOB on AL_JOB.JOB_ID = AL_REF_J.JOB_ID "
+                    "WHERE ALARM.ALARM_ID = AL_ESPA.ALARM_ID")
+
+        self.dataRefCont = cur.fetchall()
 
         cur.execute("select * from AL_ESPA")
         self.dataEspa = cur.fetchall()
@@ -424,7 +448,10 @@ class Importsiriodata():
         cur.execute("select * from AL_AB_IN")
         self.dataCont = cur.fetchall()
 
-        print(self.dataAlarm)
-        print(self.dataEspa)
-        print(self.dataJob)
-        print(self.dataCont)
+        for i in range(len(self.dataRefEspa)):
+            if self.dataRefEspa[i][0] in self.querydata:
+                self.querydata[self.dataRefEspa[i][0]].append([self.dataRefEspa[i][1], self.dataRefEspa[i][2]])
+            else:
+                self.querydata[self.dataRefEspa[i][0]] = [[self.dataRefEspa[i][1], self.dataRefEspa[i][2]]]
+
+

@@ -1,9 +1,23 @@
 import importdata
+import exportdata
 import testexcel
 
 customerdata = {"Kundenname": "00325-Parcom", "Adresse": "Hasliring 1", "Ort": "6032 Emmen"}
 
 siriodata = importdata.Importsiriodata()
+
+
+sirioexport = exportdata.Exportsirio("./files/",
+                                     customerdata,
+                                     siriodata.querydata,
+                                     siriodata.dataCont,
+                                     siriodata.dataEspa,
+                                     siriodata.dataJob)
+
+sirioexport.writesiriodata()
+
+
+
 #mxonedata = importdata.Importuserdata("C:/Source20200821")
 
 #mxonedata.importuserdata()

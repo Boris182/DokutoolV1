@@ -48,8 +48,8 @@ dataEspa.sort(key=lambda psa:psa[2])
 for i in dataEspa:
     print(i)
 
-#for i in dataJob:
- #   print(i)
+for i in dataJob:
+    print(i)
 
 
 dataCont.sort(key=lambda cont:cont[1])

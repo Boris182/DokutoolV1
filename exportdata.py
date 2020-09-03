@@ -118,12 +118,13 @@ class Exportmxone():
 
 
 class Exportsirio():
-    def __init__(self, exportpath, customerdata, refdata, contdata, espadata):
+    def __init__(self, exportpath, customerdata, querydata, contdata, espadata, jobdata):
         self.exportpath = exportpath
         self.customerdata = customerdata
-        self.refdata = refdata
+        self.querydata = querydata
         self.contdata = contdata
         self.espadata = espadata
+        self.jobdata = jobdata
 
     def writesiriodata(self):
         # Pfad der Vorlage
@@ -144,6 +145,8 @@ class Exportsirio():
         self.wssirio.cell(row=3, column=4).value = self.customerdata["Adresse"]
         # Ort
         self.wssirio.cell(row=4, column=4).value = self.customerdata["Ort"]
+
+        # Alarme / Ereignisse Befüllen
         # Daten Sortieren
         # Eingangskontakte
         self.contdata.sort(key=lambda cont: cont[1])
@@ -152,10 +155,10 @@ class Exportsirio():
         self.espadata.sort(key=lambda psa: psa[2])
 
         for i in range(len(self.contdata)):
-            self.wssirio.cell(row=self.ra, column=1).value = str(i[0])
-            self.wssirio.cell(row=self.ra, column=4).value = str(i[1])
-            self.wssirio.cell(row=self.ra, column=9).value = str(i[8])
-            if "-" in str(i[2]):
+            self.wssirio.cell(row=self.ra, column=1).value = str(self.contdata[i][0])
+            self.wssirio.cell(row=self.ra, column=4).value = str(self.contdata[i][1])
+            self.wssirio.cell(row=self.ra, column=9).value = str(self.contdata[i][8])
+            if "-" in str(self.contdata[i][2]):
                 self.wssirio.cell(row=self.ra, column=6).value = "NC"
             else:
                 self.wssirio.cell(row=self.ra, column=6).value = "NO"
@@ -163,14 +166,46 @@ class Exportsirio():
 
         for i in range(len(self.espadata)):
             self.wssirio.cell(row=self.ra, column=1).value = "ESPA Incoming"
-            self.wssirio.cell(row=self.ra, column=5).value = str(i[2])
-            self.wssirio.cell(row=self.ra, column=9).value = str(i[7])
-            self.wssirio.cell(row=self.ra, column=7).value = str(i[3])
+            self.wssirio.cell(row=self.ra, column=5).value = str(self.espadata[i][2])
+            self.wssirio.cell(row=self.ra, column=9).value = str(self.espadata[i][7])
+            self.wssirio.cell(row=self.ra, column=7).value = str(self.espadata[i][3])
+            self.ra = self.ra + 1
 
-        self.ra = self.ra + 1
+        # Teilnehmer / Jobs Befüllen
+        self.jobdata.sort(key=lambda name: name[1])
+        self.jobdata.sort(key=lambda nr: nr[4])
+        self.jobdata.sort(key=lambda nr: nr[3])
+
+        for i in range(len(self.jobdata)):
+            self.wssirio.cell(row=7, column=self.cj).value = str(self.jobdata[i][1])
+            self.wssirio.cell(row=6, column=self.cj).value = str(self.jobdata[i][4])
+            self.cj = self.cj + 1
 
 
 
 
+        # Query für Kreuze Matrix
+        self.max_row = self.wssirio.max_row
+        self.max_column = self.wssirio.max_column
 
+        self.ra = 9
+        # Start Column für Jobs / Teilnehmer
+        self.cj = 11
+
+        for i in self.querydata:
+            print(i)
+
+        for c in range(self.cj, self.max_column + 1):
+            for q in self.querydata:
+                if str(self.wssirio.cell(row=7, column=c).value) in str(self.querydata[q]):
+                    for r in range(self.ra, self.max_row + 1):
+                        print(q)
+                        print(self.wssirio.cell(row=r, column=9).value)
+                        if str(self.wssirio.cell(row=r, column=9).value) in str(q):
+                            self.wssirio.cell(row=r, column=c).value = "x"
+
+
+        # Speichert die Datei als Kopie
+        self.wbsirio.save(self.exportpath + "/Sirio_Doku_" + self.customerdata["Kundenname"] +
+                        datetime.now().strftime("%Y%m%d_%I%M%S") + ".xlsx")
 
