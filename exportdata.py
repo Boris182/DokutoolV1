@@ -157,7 +157,7 @@ class Exportsirio():
         for i in range(len(self.contdata)):
             self.wssirio.cell(row=self.ra, column=1).value = str(self.contdata[i][0])
             self.wssirio.cell(row=self.ra, column=4).value = str(self.contdata[i][1])
-            self.wssirio.cell(row=self.ra, column=9).value = str(self.contdata[i][8])
+            self.wssirio.cell(row=self.ra, column=9).value = str(self.contdata[i][7])
             if "-" in str(self.contdata[i][2]):
                 self.wssirio.cell(row=self.ra, column=6).value = "NC"
             else:
@@ -194,6 +194,7 @@ class Exportsirio():
 
         for i in self.querydata:
             print(i)
+            print(self.querydata[i])
 
         for c in range(self.cj, self.max_column + 1):
             for q in self.querydata:

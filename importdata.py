@@ -429,15 +429,25 @@ class Importsiriodata():
 
         self.dataRefEspa = cur.fetchall()
 
-        cur.execute("SELECT AL_ESPA.DESCRIPTION, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
-                    "from AL_ESPA "
-                    "right join ALARM on ALARM.ALARM_ID = AL_ESPA.ALARM_ID "
+        cur.execute("SELECT AL_AB_IN.C_NAME, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
+                    "from AL_AB_IN "
+                    "right join ALARM on ALARM.ALARM_ID = AL_AB_IN.ALARM_ID_0 "
                     "right join AL_REF_A on AL_REF_A.AGROUP_ID = ALARM.AGROUP_ID "
                     "full join AL_REF_J on AL_REF_J.JGROUP_ID = AL_REF_A.JGROUP_ID "
                     "inner join AL_JOB on AL_JOB.JOB_ID = AL_REF_J.JOB_ID "
-                    "WHERE ALARM.ALARM_ID = AL_ESPA.ALARM_ID")
+                    "WHERE ALARM.ALARM_ID = AL_AB_IN.ALARM_ID_0")
 
-        self.dataRefCont = cur.fetchall()
+        self.dataRefCont0 = cur.fetchall()
+
+        cur.execute("SELECT AL_AB_IN.C_NAME, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
+                    "from AL_AB_IN "
+                    "right join ALARM on ALARM.ALARM_ID = AL_AB_IN.ALARM_ID_1 "
+                    "right join AL_REF_A on AL_REF_A.AGROUP_ID = ALARM.AGROUP_ID "
+                    "full join AL_REF_J on AL_REF_J.JGROUP_ID = AL_REF_A.JGROUP_ID "
+                    "inner join AL_JOB on AL_JOB.JOB_ID = AL_REF_J.JOB_ID "
+                    "WHERE ALARM.ALARM_ID = AL_AB_IN.ALARM_ID_1")
+
+        self.dataRefCont1 = cur.fetchall()
 
         cur.execute("select * from AL_ESPA")
         self.dataEspa = cur.fetchall()
@@ -454,4 +464,15 @@ class Importsiriodata():
             else:
                 self.querydata[self.dataRefEspa[i][0]] = [[self.dataRefEspa[i][1], self.dataRefEspa[i][2]]]
 
+        for i in range(len(self.dataRefCont0)):
+            if self.dataRefCont0[i][0] in self.querydata:
+                self.querydata[self.dataRefCont0[i][0]].append([self.dataRefCont0[i][1], self.dataRefCont0[i][2]])
+            else:
+                self.querydata[self.dataRefCont0[i][0]] = [[self.dataRefCont0[i][1], self.dataRefCont0[i][2]]]
+
+        for i in range(len(self.dataRefCont1)):
+            if self.dataRefCont1[i][0] in self.querydata:
+                self.querydata[self.dataRefCont1[i][0]].append([self.dataRefCont1[i][1], self.dataRefCont1[i][2]])
+            else:
+                self.querydata[self.dataRefCont1[i][0]] = [[self.dataRefCont1[i][1], self.dataRefCont1[i][2]]]
 
