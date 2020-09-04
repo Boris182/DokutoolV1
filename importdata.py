@@ -7,6 +7,7 @@ class Importuserdata():
         self.users = {}
         self.path = path
         self.extensiondata = []
+        self.name1datain = []
         self.name1data = []
         self.dect_extensiondata = []
         self.ip_extensiondata = []
@@ -19,6 +20,7 @@ class Importuserdata():
         self.customerdata = customerdata
         self.extnumberrange = []
         self.clipdata = []
+        self.nameinfo = ""
 
     def print_users(self):
         for i in self.users:
@@ -34,9 +36,38 @@ class Importuserdata():
 
         with open(self.path + "/name1", encoding='utf-8') as file:
             print("Load Extension File")
-            self.name1data = file.readlines()
-            print(self.name1data[0])
+            self.name1datain = file.readlines()
+            for i in range(len(self.name1datain)):
+                if "Priority" in self.name1datain[i]:
+                    self.nameinfo = self.name1datain[i]
+                    print(self.nameinfo)
+            tonumpos = self.nameinfo.find("Number")
+            topriopos = self.nameinfo.find("Priority")
+            torestpos = self.nameinfo.find("Restriction")
+            toname1pos = self.nameinfo.find("Name1")
+            toname2pos = self.nameinfo.find("Name2")
+            toinfopos = self.nameinfo.find("Info")
             file.close()
+
+            for i in range(len(self.name1datain)):
+                if self.name1datain[i][0].isdigit():
+                    # Number
+                    extension = self.name1datain[i][:tonumpos].strip()
+                    print(extension)
+                    # Number Type
+                    numbertype = self.name1datain[i][tonumpos:topriopos].strip()
+                    # Prio
+                    priority = self.name1datain[i][topriopos:torestpos].strip()
+                    # Restriction
+                    restriction = self.name1datain[i][torestpos:toname1pos].strip()
+                    # Name 1
+                    name1 = self.name1datain[i][toname1pos:toname2pos].strip()
+                    # Name 2
+                    name2 = self.name1datain[i][toname2pos:toinfopos].strip()
+                    # Info
+                    info = self.name1datain[i][toinfopos:].strip()
+                    # Befüllt das neue Array
+                    self.name1data.append([extension, numbertype, priority, restriction, name1, name2, info])
 
         with open(self.path + "/dect_extension") as file:
             print("Load Extension File")
@@ -180,9 +211,10 @@ class Importuserdata():
                     self.users[number] = list
 
         # Verarbeitet die name1 Daten in das User Dictionary
+        print(self.name1data)
         for i in range(len(self.name1data)):
             if self.name1data[i][0].isdigit():
-                userdata = self.name1data[i].split()
+                userdata = self.name1data[i]
 
                 number = str(userdata[0])
                 name1 = userdata[4].strip('\"')
@@ -206,7 +238,10 @@ class Importuserdata():
 
                 if number in self.users:
                     self.users[number][0] = number
-                    self.users[number][1] = "DECT"
+                    if len(self.users[number][1]) == 1:
+                        self.users[number][1] = "DECT"
+                    else:
+                        self.users[number][1] = self.users[number][1] + " DECT"
                 else:
                     self.users[number] = list
 
@@ -221,7 +256,11 @@ class Importuserdata():
 
                 if number in self.users:
                     self.users[number][0] = number
-                    self.users[number][1] = iptype
+                    if len(self.users[number][1]) == 1:
+                        self.users[number][1] = iptype
+                    else:
+                        self.users[number][1] = self.users[number][1] + " " + iptype
+
                 else:
                     self.users[number] = list
 
@@ -313,7 +352,6 @@ class Importuserdata():
                 e = "0" + str(e)
             for c in range(len(self.convdata)):
                 if e[:len(self.convdata[c][0])] == self.convdata[c][0] and self.convdata[c][1] == "0":
-                    print("Extern - Intern")
                     self.intnumber = self.convdata[c][0][int(self.convdata[c][4]):] + self.convdata[c][3]
                     self.extnumber = self.convdata[c][0].replace("41", "0", 1)
 
@@ -402,7 +440,7 @@ class Importsystemdata():
                         l = l.split()
                         self.systemdata["gateway" + str(gwnumber)].append(l[3])
         except FileNotFoundError:
-            print("File Not Found")
+            print("Media Gateway General existiert nicht")
 
 
 class Importsiriodata():
