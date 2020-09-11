@@ -4,27 +4,34 @@ from tkinter import messagebox
 import importdata
 import exportdata
 
+# Erstellung des GUI
 root = Tk()
 root.title("MX-Dokumentationstool")
 
-
+# Pfade der Backup Daten
 mxonepath = ""
 siriopath = ""
 
+# Output Verzeichnisse für die Dokumentationen
 mxoneoutput = ""
 siriooutput = ""
 
+# Wert für den MX-One Dropdown
 mxoneversion = StringVar()
 mxoneversion.set("Select Version")
 
+# Wert für den Provider Dropdown
 provider = StringVar()
 provider.set("Select Provider")
 
+# Wert für den Sirio Version Dropdown
 sirioversion = StringVar()
 sirioversion.set("Select Version")
 
 
 # Funktionen
+
+# File Dialog um das Verzeichnis der REGEN Files auszuwählen
 def openmxonedir():
     global mxonepath
     mxonepath = filedialog.askdirectory(initialdir="c:/")
@@ -32,7 +39,7 @@ def openmxonedir():
     labelPathMxone.grid(row=3, column=0)
     return mxonepath
 
-
+# File Dialog um die Datenbank Datei auszuwählen
 def opensiriofile():
     global siriopath
     siriopath = filedialog.askopenfilename(initialdir="c:/")
@@ -40,7 +47,7 @@ def opensiriofile():
     labelPathSirio.grid(row=3, column=0)
     return siriopath
 
-
+# File Dialog um das Ausgabeverzeichnis auszuwählen der MX-One Doku
 def outputmxonedir():
     global mxoneoutput
     mxoneoutput = filedialog.askdirectory(initialdir="c:/")
@@ -48,7 +55,7 @@ def outputmxonedir():
     labelOutputMxone.grid(row=6, column=0)
     return mxoneoutput
 
-
+# File Dialog um das Ausgabeverzeichnis auszuwählen der Sirio Doku
 def outputsiriodir():
     global siriooutput
     siriooutput = filedialog.askdirectory(initialdir="c:/")
@@ -56,8 +63,9 @@ def outputsiriodir():
     labelOutputSirio.grid(row=6, column=0)
     return siriooutput
 
-
+# Prüft die Kundendaten
 def checkmxonefiles():
+    # Ein Fenster mit den Kundendaten geht auf
     response = messagebox.askyesno("Kontrolle der Daten",
                                    "Kundenname: " + str(inputKundenname.get()) + "\n" +
                                    "Adresse: " + str(inputAdresse.get()) + "\n" +
@@ -73,13 +81,16 @@ def checkmxonefiles():
                                    "Ausgabeverzeichnis: " + str(mxoneoutput) + "\n" +
                                    "Provider: " + str(provider.get()) + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
+    # Wenn Ja
     if response == 1:
-        print("Es wird ausgeführt")
+        print("Daten sind ok")
+    # Wenn Nein
     else:
         print("Abbruch")
 
-
+# Erstellt die MX-One Dokumentation
 def createmxonedoc():
+    # Nochmals Prüfen ob die eingegebenen Daten stimmer
     response = messagebox.askyesno("Kontrolle der Daten",
                                    "Kundenname: " + str(inputKundenname.get()) + "\n" +
                                    "Adresse: " + str(inputAdresse.get()) + "\n" +
@@ -95,7 +106,9 @@ def createmxonedoc():
                                    "Ausgabeverzeichnis: " + str(mxoneoutput) + "\n" +
                                    "Provider: " + str(provider.get()) + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
+    # Wenn Ja
     if response == 1:
+        # Kundendaten Dictionary generieren mit den eingegebenen Daten
         customerdata = {"Kundenname": inputKundenname.get(),
                         "Adresse": inputAdresse.get(),
                         "Ort": inputOrt.get(),
@@ -109,59 +122,82 @@ def createmxonedoc():
                         "Nummerbereichto3": inputExternalTo3.get(),
                         "Provider": provider.get()}
 
+        # Erstellung des Import Objekts vom dem Importuserdata mit allen Variablen
         mxoneuserdata = importdata.Importuserdata(mxonepath, customerdata)
+        # Funktion des Objekts zum Import der Daten wird ausgeführt
         mxoneuserdata.importuserdata()
+        # Funktion des Objekts zum Erstellen der Daten wird ausgeführt
         mxoneuserdata.createuserdata()
 
+        # Erstellung des Import Objekts vom Importsystemdata mit allen Variablen
         mxonesystemdata = importdata.Importsystemdata(mxonepath)
+        # Funktion des Objekts zum Import und verarbeitung der Daten wird ausgeführt
         mxonesystemdata.importsystemdata()
 
+        # Ein Objekt für den Export der Daten wird erstellt mit den benötigten Daten die
+        # aus den anderen Objekten gewonnen wurden
         mxoneexport = exportdata.Exportmxone(mxoneoutput,
                                              customerdata,
                                              mxoneuserdata.users,
                                              mxonesystemdata.systemdata,
                                              mxoneuserdata.extnumberrange)
+        # Funktion des Objekts zum Erstellen der Dokumentation wird ausgeführt
         mxoneexport.writemxonedata()
+        # Wenn das Programm durchgelaufen ist, kommt eine Meldung
         messagebox.showinfo("Finish", "Die Doku wurde erfolgreich generiert")
+    # Wenn Nein
     else:
         print("Abbruch")
 
-
+# Prüft die Kundendaten
 def checksiriofile():
+    # Ein Fenster mit den Kundendaten geht auf
     response = messagebox.askyesno("Kontrolle der Daten",
                                    "Kundenname: " + inputKundenname.get() + "\n" +
                                    "Adresse: " + inputAdresse.get() + "\n" +
                                    "Ort: " + inputOrt.get() + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
+    # Wenn Ja
     if response == 1:
-        print("Es wird ausgeführt")
+        print("Daten sind ok")
+    # Wenn Nein
     else:
         print("Abbruch")
 
-
+# Ersellt die Sirio Alarmserver Dokumentation
 def createsiriodoc():
+    # Nochmals Prüfen ob die Kundendaten stimmen
     response = messagebox.askyesno("Kontrolle der Daten",
                                    "Kundenname: " + inputKundenname.get() + "\n" +
                                    "Adresse: " + inputAdresse.get() + "\n" +
                                    "Ort: " + inputOrt.get() + "\n" +
                                    "Ausgabeverzeichnis: " + siriooutput + "\n" + "\n" +
                                    "Sind Sie sich sicher? Stimmen die Daten?")
+    # Wenn Ja
     if response == 1:
+        # Kundendaten Dictionary wird erstellt
         customerdata = {"Kundenname": inputKundenname.get(),
                         "Adresse": inputAdresse.get(),
                         "Ort": inputOrt.get()}
 
+        # Ein Objekt von Importsiriodata wird erstellt mit den benötigten Variablen
         siriodata = importdata.Importsiriodata(siriopath)
 
+        # Ein Objekt von Exportsirio wird erstellt mit den Daten aus dem Import Objekt und Kundendaten
         sirioexport = exportdata.Exportsirio(siriooutput,
                                              customerdata,
                                              siriodata.querydata,
                                              siriodata.dataCont,
                                              siriodata.dataEspa,
                                              siriodata.dataJob)
+
+        # Die Funktion des Objektes wird ausgeführt und erstellt eine Dokumenation
         sirioexport.writesiriodata()
+
+        # Wenn das Programm durchgelaufen ist, kommt eine Meldung
         messagebox.showinfo("Finish", "Die Doku wurde erfolgreich generiert")
 
+    # Wenn Nein
     else:
         print("Abbruch")
 

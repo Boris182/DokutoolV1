@@ -19,7 +19,7 @@ class Exportmxone():
 
         # Pfad der Vorlage
         self.wbmx = load_workbook("./files/PBX_Doku_Vorlage.xlsx")
-        # Sheet auswählen wo die Daten hingeschrieben werden
+        # Sheet auswählen wo die Useraten hingeschrieben werden
         self.wsmxuser = self.wbmx['Kundendatenliste']
         # Sheet auswähen wo die Durchwahlen hingerschrieben werden
         self.wsmxdw = self.wbmx['Durchwahl Liste']
@@ -154,55 +154,74 @@ class Exportsirio():
         # ESPA Alarme
         self.espadata.sort(key=lambda psa: psa[2])
 
+        # Eingangskontakt Alarme werden in die Excel geschrieben
         for i in range(len(self.contdata)):
+            # IP des Modul
             self.wssirio.cell(row=self.ra, column=1).value = str(self.contdata[i][0])
+            # Kontakt Nummer
             self.wssirio.cell(row=self.ra, column=4).value = str(self.contdata[i][1])
+            # Name des Alarm
             self.wssirio.cell(row=self.ra, column=9).value = str(self.contdata[i][7])
+            # NO oder NC, Schliesser oder Öffner
             if "-" in str(self.contdata[i][2]):
                 self.wssirio.cell(row=self.ra, column=6).value = "NC"
             else:
                 self.wssirio.cell(row=self.ra, column=6).value = "NO"
+            # Row Alarme plus 1 für nächste Zeile
             self.ra = self.ra + 1
 
+        # ESPA Alarme werden in die Excel geschrieben
         for i in range(len(self.espadata)):
+            # Typ ESPA Incoming in Typ geschrieben
             self.wssirio.cell(row=self.ra, column=1).value = "ESPA Incoming"
+            # PSA, Call Adresse
             self.wssirio.cell(row=self.ra, column=5).value = str(self.espadata[i][2])
+            # Name des Alarm
             self.wssirio.cell(row=self.ra, column=9).value = str(self.espadata[i][7])
+            # Beep Code
             self.wssirio.cell(row=self.ra, column=7).value = str(self.espadata[i][3])
+            # Row Alarme plus 1 für nächste Zeile
             self.ra = self.ra + 1
 
         # Teilnehmer / Jobs Befüllen
+        # Sortieren der Daten nach Name und Nummer
         self.jobdata.sort(key=lambda name: name[1])
         self.jobdata.sort(key=lambda nr: nr[4])
         self.jobdata.sort(key=lambda nr: nr[3])
 
+        # Teilnehmer werden eingefügt
         for i in range(len(self.jobdata)):
+            # Teilnehmer Name
             self.wssirio.cell(row=7, column=self.cj).value = str(self.jobdata[i][1])
+            # Nummer des Teilnehmer
             self.wssirio.cell(row=6, column=self.cj).value = str(self.jobdata[i][4])
+            # Column Job plus 1 für nächste Spalte
             self.cj = self.cj + 1
 
 
 
 
         # Query für Kreuze Matrix
+        # Grenzen werden deiniert durch max Funktion
         self.max_row = self.wssirio.max_row
         self.max_column = self.wssirio.max_column
 
+        # Start Row der Alarme
         self.ra = 9
         # Start Column für Jobs / Teilnehmer
         self.cj = 11
 
-        for i in self.querydata:
-            print(i)
-            print(self.querydata[i])
-
+        # Jeder Eintrag in den Teilnehmer wird durchgemacht
         for c in range(self.cj, self.max_column + 1):
+            # Jeder Teilnehmer wird in den Querydaten gesucht
             for q in self.querydata:
+                # Prüft ob der Teilnehmer in einem querydata Eintrag vorkommt
                 if str(self.wssirio.cell(row=7, column=c).value) in str(self.querydata[q]):
+                    # Wenn Ja, geh alle Alarme durch
                     for r in range(self.ra, self.max_row + 1):
-                        print(q)
-                        print(self.wssirio.cell(row=r, column=9).value)
+                        # Prüfe ob der Alarm im gematchten Teilnehmer vorkommt, wenn ja, mache ein x
                         if str(self.wssirio.cell(row=r, column=9).value) in str(q):
+                            # Schreibt ein x in dem Row des Alarms und Column des Teilnehmers
                             self.wssirio.cell(row=r, column=c).value = "x"
 
 
