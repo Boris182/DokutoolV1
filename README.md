@@ -1,5 +1,5 @@
 # DokutoolV1
-Mitel MX-One und Sirio Alarmserver Dokumentationstool
+Mitel MX-One und Sirio Alarmserver Dokumentations Tool
 
 Install requirements:
 -   Python 3.x
