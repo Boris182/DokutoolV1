@@ -1,4 +1,4 @@
-# DokutoolV1
+# Dokutool Release Q3 2020
 Mitel MX-One und Sirio Alarmserver Dokumentations Tool
 
 Install requirements:
