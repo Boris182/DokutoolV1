@@ -416,13 +416,15 @@ class Importsystemdata():
         self.mgudata = []
 
     def importsystemdata(self):
-
+        # Software Version wird geladen
         with open(self.path + "/ts_about") as file:
-            print("Load Extension File")
+            print("Load ts_about File")
             self.ts_aboutdata = file.readlines()
             print(self.ts_aboutdata)
             file.close()
 
+        # Alle Lines werden durchgegangen und nach Keyword gesucht
+        # Wenn Keyword gefunden, wird gesplittet und Daten in Dictionary geladen
         for i in self.ts_aboutdata:
             if "Version: " in i:
                 self.systemdata["mxversion"] = i.partition("Version: ")[2].replace("\n", "", 1)
@@ -431,9 +433,9 @@ class Importsystemdata():
             elif " MX-ONE Provisioning Manager " in i:
                 self.systemdata["pmversion"] = i.partition(" MX-ONE Provisioning Manager ")[2].replace(" :\n", "", 1)
 
-
+        # Es werden IP Adressen und Namen des Systems geladen
         with open(self.path + "/mxone_data") as file:
-            print("Load Extension File")
+            print("Load mxone_data File")
             self.mxone_datadata = file.readlines()
             print(self.mxone_datadata)
             file.close()
@@ -447,15 +449,20 @@ class Importsystemdata():
                 i = i.split()
                 # 0 ist Server Name, 1 ist IP des Lims, 3 ist IP der DB
                 self.systemdata["Cassandra " + i[0]] = [i[1], i[3]]
+
+        # Es werden alle Mediagateway Daten geladen, wenn solche existieren
         try:
             with open(self.path + "/media_gateway_info_general") as file:
-                print("Load Extension File")
+                print("Load media_gateway_info File")
                 self.mgudata = file.readlines()
                 print(self.mgudata)
                 file.close()
 
+                # Wenn mehrere Gateway bestehen werde die Gateways mit Nummern versehen
+                # Start Nummer 0 damit das erste Gateway 1 bekommt
                 gwnumber = 0
                 for l in self.mgudata:
+                    # Wenn eine Line das Keyword enthält wird ein Gateway + 1 erstellt
                     if " SW information" in l:
                         l = l.split()
                         gwnumber = gwnumber + 1
@@ -479,18 +486,22 @@ class Importsystemdata():
 
 class Importsiriodata():
 
-    def __init__(self):
+    def __init__(self, path):
         self.dataEspa = []
         self.dataJob = []
         self.dataCont = []
         self.dataRefEspa = {}
-        self.dataRefCont = {}
+        self.dataRefCont0 = {}
+        self.dataRefCont1 = {}
         self.querydata = {}
+        self.path = path
 
-        con = fdb.connect(dsn='localhost:c:\sirio.gdb', user='sysdba', password='masterkey')
-
+        # Verbindung zum Datenbank File
+        con = fdb.connect(dsn='localhost:' + path, user='sysdba', password='masterkey')
+        # Erstellung des Cursor für die Absetzung der SQL befehle
         cur = con.cursor()
 
+        # Referenz Daten der ESPA Alarme
         cur.execute("SELECT AL_ESPA.DESCRIPTION, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
                     "from AL_ESPA "
                     "right join ALARM on ALARM.ALARM_ID = AL_ESPA.ALARM_ID "
@@ -501,6 +512,7 @@ class Importsiriodata():
 
         self.dataRefEspa = cur.fetchall()
 
+        # Referenz Daten der Eingangskontaktdaten bei NC
         cur.execute("SELECT AL_AB_IN.C_NAME, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
                     "from AL_AB_IN "
                     "right join ALARM on ALARM.ALARM_ID = AL_AB_IN.ALARM_ID_0 "
@@ -511,6 +523,7 @@ class Importsiriodata():
 
         self.dataRefCont0 = cur.fetchall()
 
+        # Referenz Daten der Eingangskontaktdaten bei NO
         cur.execute("SELECT AL_AB_IN.C_NAME, AL_JOB.JOB_NAME, AL_REF_J.PRI, ALARM.ALARM_NAME "
                     "from AL_AB_IN "
                     "right join ALARM on ALARM.ALARM_ID = AL_AB_IN.ALARM_ID_1 "
@@ -521,30 +534,42 @@ class Importsiriodata():
 
         self.dataRefCont1 = cur.fetchall()
 
+        # ESPA Alarm Daten
         cur.execute("select * from AL_ESPA")
         self.dataEspa = cur.fetchall()
 
+        # Teilnehmer Daten
         cur.execute("select * from AL_JOB")
         self.dataJob = cur.fetchall()
 
+        # Eingandskontaktdaten
         cur.execute("select * from AL_AB_IN")
         self.dataCont = cur.fetchall()
 
+        # Es wird für jeden Alarm geschsaut, welche Teilnehmer diesen Alarm erhalten
+        # Es wird ein Dictionary erstellt, in dem für ein Alarm als Keyword
+        # alle Teilnehmer als Listen enthalten sind
         for i in range(len(self.dataRefEspa)):
+            # Wenn es den Eintrag schon gibt, füge einen weiteren Teilnehmer hinzu
             if self.dataRefEspa[i][0] in self.querydata:
                 self.querydata[self.dataRefEspa[i][0]].append([self.dataRefEspa[i][1], self.dataRefEspa[i][2]])
+            # Wenn es den Eintrag noch nicht gibt, erstelle einen neuen und füge den Teilnehmer hinzu
             else:
                 self.querydata[self.dataRefEspa[i][0]] = [[self.dataRefEspa[i][1], self.dataRefEspa[i][2]]]
 
         for i in range(len(self.dataRefCont0)):
+            # Wenn es den Eintrag schon gibt, füge einen weiteren Teilnehmer hinzu
             if self.dataRefCont0[i][0] in self.querydata:
                 self.querydata[self.dataRefCont0[i][0]].append([self.dataRefCont0[i][1], self.dataRefCont0[i][2]])
+            # Wenn es den Eintrag noch nicht gibt, erstelle einen neuen und füge den Teilnehmer hinzu
             else:
                 self.querydata[self.dataRefCont0[i][0]] = [[self.dataRefCont0[i][1], self.dataRefCont0[i][2]]]
 
         for i in range(len(self.dataRefCont1)):
+            # Wenn es den Eintrag schon gibt, füge einen weiteren Teilnehmer hinzu
             if self.dataRefCont1[i][0] in self.querydata:
                 self.querydata[self.dataRefCont1[i][0]].append([self.dataRefCont1[i][1], self.dataRefCont1[i][2]])
+            # Wenn es den Eintrag noch nicht gibt, erstelle einen neuen und füge den Teilnehmer hinzu
             else:
                 self.querydata[self.dataRefCont1[i][0]] = [[self.dataRefCont1[i][1], self.dataRefCont1[i][2]]]
 

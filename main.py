@@ -150,7 +150,8 @@ def createsiriodoc():
         customerdata = {"Kundenname": inputKundenname.get(),
                         "Adresse": inputAdresse.get(),
                         "Ort": inputOrt.get()}
-        siriodata = importdata.Importsiriodata()
+
+        siriodata = importdata.Importsiriodata(siriopath)
 
         sirioexport = exportdata.Exportsirio(siriooutput,
                                              customerdata,
