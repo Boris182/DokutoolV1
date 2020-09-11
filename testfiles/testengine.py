@@ -1,6 +1,5 @@
 import importdata
 import exportdata
-import testexcel
 
 customerdata = {"Kundenname": "00325-Parcom", "Adresse": "Hasliring 1", "Ort": "6032 Emmen"}
 
