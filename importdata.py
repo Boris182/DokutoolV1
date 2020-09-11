@@ -1,6 +1,6 @@
 import fdb
 
-
+# Klasse für die MX-One Userdaten zu importieren und sortieren
 class Importuserdata():
 
     def __init__(self, path, customerdata):
@@ -22,25 +22,33 @@ class Importuserdata():
         self.clipdata = []
         self.nameinfo = ""
 
+    # Funktion um die Users zu printen die bereits erstellt wurden
     def print_users(self):
         for i in self.users:
             print(self.users[i])
 
+    # Hauptfunktion um die Daten zu laden
     def importuserdata(self):
 
+        # Generic Extensions
         with open(self.path + "/extension") as file:
             print("Load Extension File")
             self.extensiondata = file.readlines()
             print(self.extensiondata[0])
             file.close()
 
+        # Names, es muss per Charakter Index gearbeitet werden, da manche nur einen Name haben
         with open(self.path + "/name1", encoding='utf-8') as file:
             print("Load Extension File")
             self.name1datain = file.readlines()
+
+            # Wenn Priority in der Zeile steht, wird von dieser der Char Index ausgelesen der Spalten
             for i in range(len(self.name1datain)):
                 if "Priority" in self.name1datain[i]:
                     self.nameinfo = self.name1datain[i]
                     print(self.nameinfo)
+
+            # Hier wird der Index in eine Variable gespeichert der einzelnen Spalten
             tonumpos = self.nameinfo.find("Number")
             topriopos = self.nameinfo.find("Priority")
             torestpos = self.nameinfo.find("Restriction")
@@ -49,6 +57,8 @@ class Importuserdata():
             toinfopos = self.nameinfo.find("Info")
             file.close()
 
+            # Nur wenn die Zeile mit einer Zahl Anfängt führe weiteres aus
+            # Es wird der Anfangsindex und der Endindex der Line angegeben um die Spalte zu definieren
             for i in range(len(self.name1datain)):
                 if self.name1datain[i][0].isdigit():
                     # Number
@@ -69,36 +79,42 @@ class Importuserdata():
                     # Befüllt das neue Array
                     self.name1data.append([extension, numbertype, priority, restriction, name1, name2, info])
 
+        # Dect Extensions
         with open(self.path + "/dect_extension") as file:
             print("Load Extension File")
             self.dect_extensiondata = file.readlines()
             print(self.dect_extensiondata[0])
             file.close()
 
+        # IP Extensions
         with open(self.path + "/ip_extension") as file:
             print("Load Extension File")
             self.ip_extensiondata = file.readlines()
             print(self.ip_extensiondata[0])
             file.close()
 
+        # Analoge Extensions
         with open(self.path + "/EXDDP") as file:
             print("Load Extension File")
             self.exddpdata = file.readlines()
             print(self.exddpdata[0])
             file.close()
 
+        # Digitale Extensions
         with open(self.path + "/KSDDP") as file:
             print("Load Extension File")
             self.ksddpdata = file.readlines()
             print(self.ksddpdata[0])
             file.close()
 
+        # Parallel Ringing Daten
         with open(self.path + "/parallel_ringing") as file:
             print("Load Extension File")
             self.parallel_ringingdata = file.readlines()
             print(self.parallel_ringingdata[0])
             file.close()
 
+        # Nummerumsetzung Daten
         with open(self.path + "/number_conversion_print") as file:
             self.nucondata = file.readlines()
             toentrypos = self.nucondata[1].find("Cnvtyp")
@@ -108,6 +124,7 @@ class Importuserdata():
             toprepos = self.nucondata[1].find("Trc")
             totrcpos = self.nucondata[1].find("Newtyp")
 
+            # Für die Doku werden nicht alle eile Gebraucht, daher sind viele als Reserve
             for i in range(len(self.nucondata)):
                 if self.nucondata[i][0].isdigit():
                     # Numberentry Data
@@ -123,6 +140,7 @@ class Importuserdata():
                     # Pre Data
                     pre = self.nucondata[i][totardestpos:toprepos].strip()
                     # Truncate Data
+                    # Leere Felder werden mit einem 0 Befüllt, da sonst kein Index daraus gemacht werden kann
                     truncate = self.nucondata[i][toprepos:totrcpos].strip()
                     if truncate == "":
                         truncate = "0"
@@ -142,8 +160,8 @@ class Importuserdata():
 
     # Erstellt und Sortiert das User Dictionary, fügt alle Dateien zusammen und ergänzt diese
     def createuserdata(self):
-        # Prüfen was für ein Provider, für die Externe Nummerzuweisung
 
+        # Prüfen was für ein Provider, für die Externe Nummerzuweisung
         # SBCON?
         if self.customerdata["Provider"] == "sbcon":
             try:
@@ -191,7 +209,7 @@ class Importuserdata():
             self.ext3from = int(self.customerdata["Nummerbereichfrom3"])
             self.ext3to = int(self.customerdata["Nummerbereichto3"])
 
-        # Erstellen und Befüllen des User Dictionary
+        # Befüllen des User Dictionary
 
         # Verarbeitet die Extension Daten in das User Dictionary
         for i in range(len(self.extensiondata)):
@@ -345,30 +363,46 @@ class Importuserdata():
 
 
         # Externe Nummern nach Intern
+        # Externe Nummer wird geprüft, ob eine Regel zutrifft
+        # Convdata[xy][1] = 0 heisst Extern nach Intern
         for e in self.extnumberrange:
+            # Prüft welcher Provider, damit 0 hinzugefügt wird oder nicht
             if self.customerdata["Provider"] == "sbcon":
                 e = str(e)
             elif self.customerdata["Provider"] == "combridge":
                 e = "0" + str(e)
+            # Prüft alle Regeln mit allen Externen Nummern durch
             for c in range(len(self.convdata)):
+                # Wenn von der Regel die länge der Entry Daten und die gleiche länge der Externen Nummer
+                # übereinstimmt, wird mit den Truncate und Pre Daten die Interne Nummer gerausgefunden
+                # Convdata[xy][4] Sind Anzahl Stellen die abgeschnitten werden
+                # Convdata[xy][3] Sind die Digits die hinzugefügt werden
                 if e[:len(self.convdata[c][0])] == self.convdata[c][0] and self.convdata[c][1] == "0":
                     self.intnumber = self.convdata[c][0][int(self.convdata[c][4]):] + self.convdata[c][3]
+                    # Zur korrekten Darstellung wird wenn es mit 41 Anfängt durch 0 ersetzt
                     self.extnumber = self.convdata[c][0].replace("41", "0", 1)
-
+                    # Füllt die Externe Nummer in den vorhandenen Eintrag
+                    # Wenn nicht wird nichts gemacht
                     if self.intnumber in self.users:
                         self.users[self.intnumber][10] = str(self.extnumber)
 
         # Clip nach Extern
-        # Clip Daten erstellen
+        # Interne Nummer wird geprüft, ob eine Regel zutrifft
+        # Convdata[xy][1] = 1 heisst Intern nach Extern
         for i in range(len(self.convdata)):
             if self.convdata[i][1] == "1":
                 self.clipdata.append([self.convdata[i][0], self.convdata[i][3], self.convdata[i][4]])
 
         for d in self.users:
             for c in range(len(self.clipdata)):
+                # Wenn von der Regel die länge der Entry Daten und die gleiche länge der Internen Nummer
+                # übereinstimmt, wird mit den Truncate und Pre Daten die Externe Nummer gerausgefunden
+                # clipdata[xy][0] Sind Anzahl Stellen die abgeschnitten werden
+                # clipdata[xy][2] Sind die Digits die hinzugefügt werden
                 if d[:len(self.clipdata[c][0])] == self.clipdata[c][0]:
                     self.intnumber = d
                     self.extnumber = str(self.clipdata[c][1]) + str(d[int(self.clipdata[c][2]):])
+                    # Zur korrekten Darstellung wird wenn es mit 41 Anfängt durch 0 ersetzt
                     self.users[self.intnumber][11] = str(self.extnumber.replace("41", "0", 1))
 
 

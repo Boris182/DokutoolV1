@@ -7,7 +7,6 @@ import exportdata
 root = Tk()
 root.title("MX-Dokumentationstool")
 
-root.iconbitmap("parcom.ico")
 
 mxonepath = ""
 siriopath = ""
@@ -179,7 +178,11 @@ frameSirio = LabelFrame(root, text="Sirio", padx=5, pady=5)
 frameSirio.grid(row=0, rowspan=3, sticky=N, column=2, padx=5, pady=5)
 
 # Info Frame-------------------------------------------------------
-labelInfo = Label(frameInfo, text="Das ist die Info").grid()
+labelInfo = Label(frameInfo, text="Bitte trage die Daten des Kunden sorgfältig ein\n"
+                                  "Für die MX-One ist der Nummerbereich wichtig damit\n"
+                                  "die Nummerumsetzung richtig funktioniert.\n"
+                                  "Viel Spass :-)")
+labelInfo.grid()
 
 # Kundendaten Frame-------------------------------------------------
 
@@ -230,7 +233,10 @@ inputExternalTo3.grid(row=3, column=1)
 # MX-One Frame-------------------------------------
 
 # Labels
-labelInfoMxone = Label(frameMxone, text="Hier entsteht die MX-One Konfig").grid(row=0, column=0)
+labelInfoMxone = Label(frameMxone, text="Bitte wähle das Verzeichniss der Source Files der MX-One. \n "
+                                        "Wähle den Provider korrekt aus, ansonsten funktioniert die \n"
+                                        "Nummerumsetzung nicht\n"
+                                        "Danach kann mit ""Create"" die Dokumentation erstellt werden").grid(row=0, column=0)
 labelInfoPathMxone = Label(frameMxone, text="Wähle das Verzeichniss der REGEN Files").grid(row=1, column=0)
 labelPathMxone = Label(frameMxone, text="Path: " + mxonepath).grid(row=3, column=0)
 labelInfoOutputMxone = Label(frameMxone, text="Wähle das Output Verzeichniss").grid(row=4, column=0)
@@ -254,7 +260,9 @@ dropProvider.grid(row=11, column=0)
 
 # Sirio Frame
 # Labels
-labelInfoSirio = Label(frameSirio, text="Hier entsteht die Sirio Konfig")
+labelInfoSirio = Label(frameSirio, text="Bitte wähle das .gdp Datenbank File aus.\n"
+                                        "Aus dem Datenbank File ensteht danach mit dem\n"
+                                        "Create Button die Dokumentation")
 labelInfoSirio.grid(row=0, column=0)
 labelInfoPathSirio = Label(frameSirio, text="Wähle die Datenbank Datei aus")
 labelInfoPathSirio.grid(row=1, column=0)
