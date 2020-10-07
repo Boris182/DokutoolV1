@@ -4,6 +4,6 @@ Mitel MX-One und Sirio Alarmserver Dokumentations Tool
 Install requirements:
 -   Python 3.x
 -   pip installer
--   pip install fbd
+-   pip install fdb
 -   pip install openpyxl
 -   Firebird Database 2.5
